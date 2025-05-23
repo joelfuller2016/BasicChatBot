@@ -239,8 +239,8 @@ namespace CSharpAIAssistant.BusinessLogic
                 // Invalidate cache
                 InvalidateCacheEntry(settingFromUI.SettingKey);
 
-                System.Diagnostics.Trace.WriteLine("Setting '{0}' {1} successfully", 
-                    settingFromUI.SettingKey, isUpdate ? "updated" : "created");
+                System.Diagnostics.Trace.WriteLine(string.Format("Setting '{0}' {1} successfully", 
+                    settingFromUI.SettingKey, isUpdate ? "updated" : "created"));
             }
             catch (Exception ex)
             {

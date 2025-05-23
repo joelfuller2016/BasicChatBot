@@ -4,3 +4,9 @@ C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Models\obj\Debug\CSharpA
 C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Models\obj\Debug\CSharpAIAssistant.Models.csproj.CoreCompileInputs.cache
 C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Models\obj\Debug\CSharpAIAssistant.Models.dll
 C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Models\obj\Debug\CSharpAIAssistant.Models.pdb
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.Models\bin\Debug\CSharpAIAssistant.Models.dll
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.Models\bin\Debug\CSharpAIAssistant.Models.pdb
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.Models\obj\Debug\CSharpAIAssistant.Models.csproj.AssemblyReference.cache
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.Models\obj\Debug\CSharpAIAssistant.Models.csproj.CoreCompileInputs.cache
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.Models\obj\Debug\CSharpAIAssistant.Models.dll
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.Models\obj\Debug\CSharpAIAssistant.Models.pdb

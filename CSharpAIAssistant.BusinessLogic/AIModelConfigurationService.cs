@@ -138,8 +138,8 @@ namespace CSharpAIAssistant.BusinessLogic
 
                 if (success)
                 {
-                    System.Diagnostics.Trace.WriteLine("AI model configuration {0}: {1} ({2})", 
-                        isUpdate ? "updated" : "created", config.DisplayName, config.ModelIdentifier);
+                    System.Diagnostics.Trace.WriteLine(string.Format("AI model configuration {0}: {1} ({2})", 
+                        isUpdate ? "updated" : "created", config.DisplayName, config.ModelIdentifier));
                 }
 
                 return success;
@@ -172,8 +172,8 @@ namespace CSharpAIAssistant.BusinessLogic
                 
                 if (success)
                 {
-                    System.Diagnostics.Trace.WriteLine("AI model configuration deleted: {0} ({1})", 
-                        config.DisplayName, config.ModelIdentifier);
+                    System.Diagnostics.Trace.WriteLine(string.Format("AI model configuration deleted: {0} ({1})", 
+                        config.DisplayName, config.ModelIdentifier));
                 }
 
                 return success;
@@ -213,8 +213,8 @@ namespace CSharpAIAssistant.BusinessLogic
                 
                 if (success)
                 {
-                    System.Diagnostics.Trace.WriteLine("AI model configuration {0}: {1} ({2})", 
-                        isActive ? "activated" : "deactivated", config.DisplayName, config.ModelIdentifier);
+                    System.Diagnostics.Trace.WriteLine(string.Format("AI model configuration {0}: {1} ({2})", 
+                        isActive ? "activated" : "deactivated", config.DisplayName, config.ModelIdentifier));
                 }
 
                 return success;

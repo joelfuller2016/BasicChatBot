@@ -41,9 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIModelConfiguration.cs" />
+    <Compile Include="AIResponse.cs" />
+    <Compile Include="AITask.cs" />
+    <Compile Include="AITaskResult.cs" />
+    <Compile Include="ApplicationSetting.cs" />
+    <Compile Include="Interfaces\IAIService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="User.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -7,3 +7,14 @@ C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSh
 C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.dll
 C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.pdb
 C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.csproj.CopyComplete
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\CSharpAIAssistant.DataAccess.dll
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\CSharpAIAssistant.DataAccess.pdb
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\CSharpAIAssistant.Models.dll
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\CSharpAIAssistant.Models.pdb
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.csproj.AssemblyReference.cache
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.csproj.CoreCompileInputs.cache
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.dll
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.pdb
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\System.Data.SQLite.dll
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\System.Data.SQLite.xml
+C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.csproj.CopyComplete

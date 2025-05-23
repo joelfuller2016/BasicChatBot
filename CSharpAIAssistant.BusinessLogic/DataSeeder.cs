@@ -1,9 +1,8 @@
 using System;
 using System.Data.SQLite;
 using System.Diagnostics;
-using CSharpAIAssistant.BusinessLogic;
 
-namespace CSharpAIAssistant.DataAccess
+namespace CSharpAIAssistant.BusinessLogic
 {
     /// <summary>
     /// Handles seeding of initial data when the database is first created
@@ -112,7 +111,7 @@ namespace CSharpAIAssistant.DataAccess
                         }
                     }
                     
-                    Trace.WriteLine("Default application settings seeded. Count: {0} (Encrypted values are properly encrypted placeholders)", defaultSettings.Length);
+                    Trace.WriteLine(string.Format("Default application settings seeded. Count: {0} (Encrypted values are properly encrypted placeholders)", defaultSettings.Length));
                 }
                 else
                 {

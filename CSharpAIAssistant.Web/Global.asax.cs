@@ -4,8 +4,6 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Web;
-using System.Web.Optimization;
-using System.Web.Routing;
 using CSharpAIAssistant.DataAccess;
 using CSharpAIAssistant.BusinessLogic;
 
@@ -16,9 +14,7 @@ namespace CSharpAIAssistant.Web
         void Application_Start(object sender, EventArgs e)
         {
             // Code that runs on application startup
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);
-
+            
             // Initialize database
             InitializeDatabase();
             
@@ -132,7 +128,7 @@ namespace CSharpAIAssistant.Web
                                       SqlSchemaConstants.AllDDLStatements.Length);
 
                         // Seed initial data
-                        DataSeeder.SeedInitialData(connection, transaction);
+                        CSharpAIAssistant.BusinessLogic.DataSeeder.SeedInitialData(connection, transaction);
 
                         // Commit transaction
                         transaction.Commit();
@@ -150,19 +146,5 @@ namespace CSharpAIAssistant.Web
     }
 
     // Placeholder configuration classes - these would typically be in App_Start folder
-    public class RouteConfig
-    {
-        public static void RegisterRoutes(RouteCollection routes)
-        {
-            // Route configuration would go here
-        }
-    }
-
-    public class BundleConfig
-    {
-        public static void RegisterBundles(BundleCollection bundles)
-        {
-            // Bundle configuration would go here
-        }
-    }
+    // Removed bundling and routing for simplicity - using basic Web Forms navigation
 }

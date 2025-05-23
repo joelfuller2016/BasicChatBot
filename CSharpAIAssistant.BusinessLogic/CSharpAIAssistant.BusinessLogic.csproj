@@ -31,8 +31,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite, Version=1.0.118.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\lib\net45\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,17 +49,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIModelConfigurationService.cs" />
+    <Compile Include="AITaskProcessor.cs" />
+    <Compile Include="AITaskService.cs" />
+    <Compile Include="ApplicationSettingsService.cs" />
+    <Compile Include="DataSeeder.cs" />
+    <Compile Include="EncryptionService.cs" />
+    <Compile Include="MockAIService.cs" />
+    <Compile Include="OpenAIService.cs" />
+    <Compile Include="PasswordHasher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CSharpAIAssistant.Models\CSharpAIAssistant.Models.csproj">
-      <Project>{2992F6F2-41D7-4EFC-A6A2-E41FA0009463}</Project>
-      <Name>CSharpAIAssistant.Models</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CSharpAIAssistant.DataAccess\CSharpAIAssistant.DataAccess.csproj">
       <Project>{B9D76441-1EBF-499B-BC1B-3F432B436CB9}</Project>
-      <Name>CSharpAIAssistant.DataAccess</Name>
+      <n>CSharpAIAssistant.DataAccess</n>
     </ProjectReference>
+    <ProjectReference Include="..\CSharpAIAssistant.Models\CSharpAIAssistant.Models.csproj">
+      <Project>{2992F6F2-41D7-4EFC-A6A2-E41FA0009463}</Project>
+      <n>CSharpAIAssistant.Models</n>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,0 +1,11 @@
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.BusinessLogic.dll
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.BusinessLogic.pdb
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.DataAccess.dll
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.Models.dll
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.Models.pdb
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.DataAccess.pdb
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.BusinessLogic\obj\Debug\CSharpAIAssistant.BusinessLogic.csproj.AssemblyReference.cache
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.BusinessLogic\obj\Debug\CSharpAIAssistant.BusinessLogic.csproj.CoreCompileInputs.cache
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.BusinessLogic\obj\Debug\CSharpAIAssistant.BusinessLogic.dll
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.BusinessLogic\obj\Debug\CSharpAIAssistant.BusinessLogic.pdb
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.BusinessLogic\obj\Debug\CSharpAIAssistant.BusinessLogic.csproj.CopyComplete

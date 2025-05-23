@@ -1,0 +1,15 @@
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.Web.dll
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.Web.pdb
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.BusinessLogic.dll
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.DataAccess.dll
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.Models.dll
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.BusinessLogic.pdb
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.DataAccess.pdb
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.Models.pdb
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Web.Infrastructure.xml
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.csproj.AssemblyReference.cache
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.csproj.CoreCompileInputs.cache
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.csproj.CopyComplete
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.dll
+C:\Users\j.fuller\Claude\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.pdb

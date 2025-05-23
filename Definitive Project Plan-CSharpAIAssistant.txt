@@ -1,0 +1,721 @@
+
+**Definitive Project Plan: CSharpAIAssistant (v5 - Instructional, Granular, Diagrams, Manual)**
+
+**Project Mandate:** Develop the "CSharpAIAssistant" application according to the specifications herein. The technology stack is .NET Framework 4.8, ASP.NET Web Forms, C# with ADO.NET for SQLite, HTML5, Bootstrap, CSS3, and jQuery. Implement Google OAuth. All application settings must be stored encrypted in the SQLite database and managed via a secure admin interface with privileged data viewing. The application will self-create its SQLite database and schema on first launch. Generate a PowerShell script for initial project setup. Concurrently, document the build process step-by-step in `Build_Log.md`.
+
+---
+
+**Phase 0: Foundational Setup & Build Automation**
+
+*   **[ ] Step 0.0: Initialize Build Log Document**
+    *   **[ ] Instruction:** Create a new Markdown file named `Build_Log.md` in the root of the project workspace.
+    *   **[ ] Instruction:** Write the first entry: "Step 0.0: Initialized Build Log. Commencing CSharpAIAssistant project generation."
+    *   **Purpose:** Establishes the live documentation mechanism for the build process.
+
+*   **[ ] Step 0.1: Develop PowerShell Project Setup Script (`Build-Project.ps1`)**
+    *   **[ ] Instruction:** Generate `Build-Project.ps1` at the root of the project checkout directory.
+    *   **[ ] Script Functional Requirements:**
+        1.  **Parameterization:** The script must accept a `$SolutionRoot` path parameter (defaulting to its own parent directory).
+        2.  **Directory Structure Creation:** Implement logic to create the standard project directory structure:
+            *   `$SolutionRoot/CSharpAIAssistant.Web/` (with subfolders: `App_Data/`, `Account/`, `Admin/`, `Content/`, `Scripts/`, `Tasks/`)
+            *   `$SolutionRoot/CSharpAIAssistant.DataAccess/`
+            *   `$SolutionRoot/CSharpAIAssistant.BusinessLogic/`
+            *   `$SolutionRoot/CSharpAIAssistant.Models/`
+            *   `$SolutionRoot/packages/`
+        3.  **NuGet Package Acquisition:** Implement logic to download specified NuGet packages using `nuget.exe` CLI (assume `nuget.exe` is accessible or its path is configurable).
+            *   Target Packages (latest .NET 4.8 compatible versions): `System.Data.SQLite.Core`, `Microsoft.Owin.Host.SystemWeb`, `Microsoft.Owin.Security.Cookies`, `Microsoft.Owin.Security.Google`, `Newtonsoft.Json`.
+            *   Command: `nuget.exe install <PackageName> -Version <VersionNumber> -OutputDirectory $SolutionRoot\packages`. Ensure error handling for failed downloads.
+        4.  **Solution File (`.sln`) Generation:** Implement logic to generate the content for `CSharpAIAssistant.sln`. This requires generating unique Project GUIDs for each `.csproj` and formatting the `.sln` file to reference these projects correctly.
+        5.  **Project File (`.csproj`) Generation:** For each project (`.Web`, `.DataAccess`, `.BusinessLogic`, `.Models`):
+            *   Implement logic to generate the XML content for a .NET Framework 4.8 project file (classic SDK style).
+            *   Include standard elements: `<TargetFrameworkVersion>`, unique `<ProjectGuid>`, `<OutputType>`, `<RootNamespace>`, `<AssemblyName>`.
+            *   **NuGet References:** Implement logic to add `<Reference>` elements with correct `<HintPath>`s pointing to DLLs within the `$SolutionRoot\packages\` subdirectories for each acquired NuGet package relevant to the project. This requires parsing package structures to find the correct `lib/netXX` folder.
+            *   **Framework References:** Add standard .NET Framework assembly references.
+        6.  **Inter-Project References:** Implement logic to add `<ProjectReference>` elements to the respective `.csproj` files, establishing dependencies between local projects.
+        7.  **Logging:** The script must output its actions and any errors to the console.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 0.1: Generated `Build-Project.ps1` for project scaffolding and dependency acquisition. Script includes directory creation, NuGet package download via nuget.exe, and generation of .sln and .csproj files with necessary references."
+    *   **Purpose:** Automates the initial setup of a buildable project structure and its dependencies.
+
+*   **[ ] Step 0.2: Initial `Web.config` and Static Frontend Assets**
+    *   **[ ] Instruction:** Create and configure `CSharpAIAssistant.Web/Web.config`.
+        *   **Content Requirements:**
+            *   `appSettings`: Define only `<add key="SQLiteDbFileName" value="CSharpAIAssistant.db"/>`.
+            *   `customErrors`: Configure `mode="RemoteOnly"` and `defaultRedirect="~/Error.aspx"`.
+            *   `compilation`: Set `debug="true"` and `targetFramework="4.8"`.
+            *   `httpRuntime`: Set `targetFramework="4.8"`.
+            *   `authentication`: Set `mode="Forms"` with `loginUrl="~/Account/Login.aspx"`, `timeout="30"`, and `name="CSharpAIAssistantAuth"`.
+            *   `authorization`: Include `<deny users="?" />`.
+            *   `system.webServer`: Ensure OWIN handlers and `runAllManagedModulesForAllRequests="true"`.
+            *   `runtime/assemblyBinding`: Add bindings for `Newtonsoft.Json` and `Microsoft.Owin` packages.
+    *   **[ ] Instruction:** Place static frontend assets into `CSharpAIAssistant.Web/`.
+        *   `Content/bootstrap.min.css` (Bootstrap v4 or v5).
+        *   `Content/site.css` (empty, for custom application styles).
+        *   `Scripts/jquery.min.js` (jQuery v3.x).
+        *   `Scripts/bootstrap.bundle.min.js` (or equivalent Bootstrap JS).
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 0.2: Generated initial `Web.config` with core settings and placed static frontend assets."
+    *   **Purpose:** Establishes fundamental web application configuration and client-side libraries.
+
+*   **[ ] Step 0.3: Master Page (`Site.Master`) Setup**
+    *   **[ ] Instruction:** Create `CSharpAIAssistant.Web/Site.Master`, its code-behind `Site.Master.cs`, and the designer file.
+    *   **[ ] Functional Requirements for `Site.Master`:**
+        *   Standard HTML5 structure, linking to Bootstrap CSS and `site.css`.
+        *   Define `asp:ContentPlaceHolder` for head content (`HeadContent`) and main page content (`MainContent`).
+        *   Implement a Bootstrap `navbar` for site navigation.
+            *   Navigation links: "Home".
+            *   Conditional links (based on login status using `asp:LoginView`):
+                *   Logged-in users: "My Tasks".
+                *   Admin users (check `Session["IsAdmin"]` in `Site.Master.cs`): "Admin" dropdown with links to "App Settings", "User Management", "AI Models".
+            *   Authentication links (using `asp:LoginView` and `asp:LoginStatus`): "Login/Register" or "Hello, [User]!/Log off".
+        *   Include jQuery and Bootstrap JS script tags before the closing `</body>` tag. Define an `asp:ContentPlaceHolder` for page-specific scripts (`ScriptsPlaceHolder`).
+    *   **[ ] Functional Requirements for `Site.Master.cs`:**
+        *   In `Page_Load`, implement logic to check `Context.User.Identity.IsAuthenticated` and `Session["IsAdmin"] == true` to dynamically control the visibility of the "Admin" navigation menu.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 0.3: Generated `Site.Master` with layout, navigation (including dynamic admin menu), and content placeholders. Implemented code-behind for admin menu visibility."
+    *   **Purpose:** Creates the primary layout template, ensuring consistent look, feel, and navigation across the application.
+
+---
+
+**Phase 1: Dynamic Database & Schema Management Core**
+
+*   **[ ] Step 1.0: Define Database Schema Requirements and Generate DDL Constants**
+    *   **[ ] Instruction:** Create a new static C# class named `SqlSchemaConstants` within the `CSharpAIAssistant.DataAccess` project.
+    *   **[ ] Instruction:** Within `SqlSchemaConstants.cs`, define `public static readonly string` fields. Each field will hold a complete SQL DDL statement (`CREATE TABLE` or `CREATE INDEX`) for SQLite, based on the schema design detailed below. Ensure all table and index creations check for existence first (e.g., `CREATE TABLE IF NOT EXISTS...`).
+    *   **[ ] Schema Design Details (to be translated into SQL DDL strings by the development entity):**
+        1.  **Table: `Users`**
+            *   Purpose: Stores user account information.
+            *   Columns: `Id` (INTEGER, PRIMARY KEY, AUTOINCREMENT), `Username` (TEXT, NOT NULL, UNIQUE), `Email` (TEXT, UNIQUE), `PasswordHash` (TEXT, NULLABLE), `GoogleId` (TEXT, UNIQUE, NULLABLE), `RegistrationDate` (TEXT, NOT NULL, DEFAULT `(datetime('now', 'utc'))`), `LastLoginDate` (TEXT, NULLABLE), `IsAdmin` (INTEGER, NOT NULL, DEFAULT 0).
+            *   Indexes: Create indexes on `Username` (with `COLLATE NOCASE`), `Email` (with `COLLATE NOCASE`), and `GoogleId`.
+        2.  **Table: `ApplicationSettings`**
+            *   Purpose: Stores all configurable application parameters, including sensitive data.
+            *   Columns: `Id` (INTEGER, PRIMARY KEY, AUTOINCREMENT), `SettingKey` (TEXT, NOT NULL, UNIQUE), `SettingValue` (TEXT, NULLABLE), `SettingDescription` (TEXT, NULLABLE), `DataType` (TEXT, NOT NULL - expected values: "String", "EncryptedString", "Boolean", "Integer", "Real"), `IsSensitive` (INTEGER, NOT NULL, DEFAULT 0), `GroupName` (TEXT, NULLABLE), `CreatedAt` (TEXT, NOT NULL, DEFAULT `(datetime('now', 'utc'))`), `UpdatedAt` (TEXT, NULLABLE).
+            *   Indexes: Create an index on `SettingKey` (with `COLLATE NOCASE`).
+        3.  **Table: `AIModelConfigurations`**
+            *   Purpose: Stores configurations for different AI models the application can use.
+            *   Columns: `Id` (INTEGER, PRIMARY KEY, AUTOINCREMENT), `ModelIdentifier` (TEXT, NOT NULL, UNIQUE), `DisplayName` (TEXT, NOT NULL), `OpenAISettingKeyForApiKey` (TEXT, NOT NULL - refers to a `SettingKey` in `ApplicationSettings` holding the encrypted API key), `DefaultMaxTokens` (INTEGER, NULLABLE), `DefaultTemperature` (REAL, NULLABLE), `IsActive` (INTEGER, NOT NULL, DEFAULT 1), `Notes` (TEXT, NULLABLE), `CreatedAt` (TEXT, NOT NULL, DEFAULT `(datetime('now', 'utc'))`), `UpdatedAt` (TEXT, NULLABLE).
+            *   Indexes: Create an index on `ModelIdentifier` (with `COLLATE NOCASE`).
+        4.  **Table: `AITasks`**
+            *   Purpose: Represents AI tasks submitted by users.
+            *   Columns: `Id` (INTEGER, PRIMARY KEY, AUTOINCREMENT), `UserId` (INTEGER, NOT NULL, FOREIGN KEY to `Users(Id)` ON DELETE CASCADE), `AIModelConfigurationId` (INTEGER, NOT NULL, FOREIGN KEY to `AIModelConfigurations(Id)` ON DELETE RESTRICT), `TaskName` (TEXT, NULLABLE), `PromptText` (TEXT, NOT NULL), `Status` (TEXT, NOT NULL), `MaxTokens` (INTEGER, NULLABLE), `Temperature` (REAL, NULLABLE), `CreatedAt` (TEXT, NOT NULL, DEFAULT `(datetime('now', 'utc'))`), `QueuedAt` (TEXT, NULLABLE), `ProcessingStartedAt` (TEXT, NULLABLE), `CompletedAt` (TEXT, NULLABLE), `ErrorMessage` (TEXT, NULLABLE).
+            *   Indexes: Create indexes on `UserId` and `Status`.
+        5.  **Table: `AITaskResults`**
+            *   Purpose: Stores the results of processed AI tasks.
+            *   Columns: `Id` (INTEGER, PRIMARY KEY, AUTOINCREMENT), `AITaskId` (INTEGER, NOT NULL, UNIQUE, FOREIGN KEY to `AITasks(Id)` ON DELETE CASCADE), `GeneratedContent` (TEXT, NULLABLE), `TokensUsed_Prompt` (INTEGER, NULLABLE), `TokensUsed_Completion` (INTEGER, NULLABLE), `TokensUsed_Total` (INTEGER, NULLABLE), `ProcessingTimeMs` (INTEGER, NULLABLE), `ModelUsedIdentifier` (TEXT, NULLABLE), `Success` (INTEGER, NOT NULL), `CreatedAt` (TEXT, NOT NULL, DEFAULT `(datetime('now', 'utc'))`).
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 1.0: Generated `SqlSchemaConstants.cs` containing C# string constants for all SQLite DDL statements, defining the complete database structure."
+    *   **Purpose:** Centralizes the database schema definition as executable SQL within the application's codebase.
+
+*   **[ ] Step 1.1: Implement Database Initialization and Seeding Logic**
+    *   **[ ] Instruction:** Create a static class `DbConfiguration` in the `CSharpAIAssistant.DataAccess` project with a `public static string DatabasePath;` property.
+    *   **[ ] Instruction:** Modify `Global.asax.cs` in the `CSharpAIAssistant.Web` project.
+        *   **In `Application_Start()`:**
+            1.  Implement logic to retrieve `SQLiteDbFileName` from `Web.config`'s `appSettings`.
+            2.  Construct the full `dbPath` using `Server.MapPath()` and `App_Data` subdirectory (ensure `App_Data` is created if it doesn't exist).
+            3.  Assign the `dbPath` to `DbConfiguration.DatabasePath`.
+            4.  Implement a check: `if (!System.IO.File.Exists(dbPath))`.
+            5.  If the database file does not exist:
+                *   Call `System.Data.SQLite.SQLiteConnection.CreateFile(dbPath);`.
+                *   Establish an `SQLiteConnection` (ensure `Foreign Keys=True;` is in the connection string).
+                *   Begin an `SQLiteTransaction`.
+                *   Programmatically iterate through each DDL string constant in `SqlSchemaConstants` and execute it using an `SQLiteCommand` within the current transaction.
+                *   After successful schema creation, call a new static method `DataSeeder.SeedInitialData(SQLiteConnection connection, SQLiteTransaction transaction)` (defined next), passing the open connection and transaction.
+                *   Commit the transaction if all schema creation and data seeding operations succeed. Implement `try-catch-finally` to ensure the transaction is rolled back on any error and the connection is closed.
+            6.  Log all significant actions (DB creation, schema execution, seeding, commit/rollback) and any errors using `System.Diagnostics.Trace`.
+    *   **[ ] Instruction:** Create a static class `DataSeeder` in the `CSharpAIAssistant.DataAccess` project.
+        *   **Implement `public static void SeedInitialData(SQLiteConnection connection, SQLiteTransaction transaction)`:**
+            *   **Seed Admin User:**
+                *   Check if the `Users` table is empty (e.g., `SELECT COUNT(*) FROM Users`).
+                *   If empty, insert a default admin user: Username "admin", Email "admin@example.com", `PasswordHash` (generated by calling `PasswordHasher.HashPassword("adminpassword")` - `PasswordHasher` will be created in Phase 2), `IsAdmin = 1`, `RegistrationDate = DateTime.UtcNow`. Log this action and the placeholder password.
+            *   **Seed Application Settings:**
+                *   Check if the `ApplicationSettings` table is empty.
+                *   If empty, insert essential default settings as defined in the Base Requirements (e.g., "GoogleClientId" with placeholder, "GoogleClientSecret_Encrypted" with encrypted placeholder using `EncryptionService.Encrypt()` - `EncryptionService` will be created in Step 1.4, "OpenAIApiKey_Default_Encrypted", "SessionTimeoutMinutes", "DefaultAIModelIdentifier", etc.). Log this action.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 1.1: Implemented database auto-creation logic in `Global.asax.cs`, including schema execution from `SqlSchemaConstants`. Created `DbConfiguration.cs` for DB path storage. Created `DataSeeder.cs` with logic to seed initial admin user and default application settings (placeholders for secrets)."
+    *   **Purpose:** Enables the application to be self-initializing regarding its database structure and essential starting data.
+
+*   **[ ] Step 1.2: Implement Core Data Access Layer Helper (`SQLiteHelper.cs`)**
+    *   **[ ] Instruction:** Create a static class `SQLiteHelper` in the `CSharpAIAssistant.DataAccess` project.
+    *   **[ ] Functional Requirements for `SQLiteHelper` methods:**
+        *   **`private static string GetConnectionString()`:** Returns connection string using `DbConfiguration.DatabasePath` and including `Foreign Keys=True;`.
+        *   **`public static int ExecuteNonQuery(string sql, params SQLiteParameter[] parameters)`:**
+            *   Opens connection, creates command, adds parameters, executes, closes connection. Returns rows affected.
+            *   Define conceptual unit tests for: successful execution, execution with parameters, handling of SQL errors (e.g., constraint violations).
+        *   **`public static object ExecuteScalar(string sql, params SQLiteParameter[] parameters)`:**
+            *   Opens connection, creates command, adds parameters, executes, closes connection. Returns scalar value.
+            *   Define conceptual unit tests for: successful execution, returning various data types, null result.
+        *   **`public static System.Data.DataTable GetDataTable(string sql, params SQLiteParameter[] parameters)`:**
+            *   Opens connection, creates command, adds parameters, uses `SQLiteDataAdapter` to fill `DataTable`, closes connection.
+            *   Define conceptual unit tests for: returning populated DataTable, returning empty DataTable.
+        *   **`public static void ExecuteReader(string sql, Action<System.Data.SQLite.SQLiteDataReader> rowProcessorCallback, params SQLiteParameter[] parameters)`:**
+            *   Opens connection, creates command, adds parameters, executes reader.
+            *   Iterates `while (reader.Read())`, calling `rowProcessorCallback(reader)` for each row. Ensures reader and connection are closed.
+            *   Define conceptual unit tests for: processing multiple rows, processing zero rows, correct data extraction within callback.
+        *   **`public static SQLiteParameter CreateParameter(string name, object value, System.Data.DbType? dbType = null)`:** Helper to instantiate `SQLiteParameter`, handling `DBNull.Value` for null inputs.
+        *   All data execution methods must use `using` for disposable objects and correctly handle parameters to prevent SQL injection.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 1.2: Implemented `SQLiteHelper.cs` with reusable, parameterized ADO.NET methods for executing non-query, scalar, reader, and DataTable SQL commands against SQLite."
+    *   **Purpose:** Provides a robust, secure, and centralized utility for all database interactions.
+
+*   **[ ] Step 1.3: Generate Model (POCO) Classes**
+    *   **[ ] Instruction:** In the `CSharpAIAssistant.Models` project, create C# classes for each database entity defined in Step 1.0.
+        *   `User.cs`
+        *   `ApplicationSetting.cs`
+        *   `AIModelConfiguration.cs`
+        *   `AITask.cs`
+        *   `AITaskResult.cs`
+    *   **[ ] Functional Requirements for POCOs:**
+        *   Each class should have public properties corresponding to the columns of its respective database table.
+        *   Use appropriate C# data types (e.g., `int`, `string`, `bool`, `DateTime`, nullable types like `DateTime?`, `int?`, `double?` where DB columns allow NULLs).
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 1.3: Generated POCO model classes in `CSharpAIAssistant.Models` project for all database entities."
+    *   **Purpose:** Defines the application's domain model, enabling strongly-typed data handling.
+
+*   **[ ] Step 1.4: Implement Data Encryption Service (`EncryptionService.cs`)**
+    *   **[ ] Instruction:** Create a static class `EncryptionService` in the `CSharpAIAssistant.BusinessLogic` project.
+    *   **[ ] Functional Requirements for `EncryptionService`:**
+        *   **Key/IV Management:**
+            *   Define `private static readonly byte[] EncryptionKey;` and `private static readonly byte[] InitializationVector;`.
+            *   In a static constructor, initialize these byte arrays. Generate secure, random-looking string constants for the key (32 bytes for AES-256) and IV (16 bytes for AES), then convert them to byte arrays using `Encoding.UTF8.GetBytes()`, ensuring correct length by padding or truncating if necessary.
+            *   Include a prominent source code comment warning that hardcoding keys/IVs is for development/AI-build purposes only and is a security risk in production, recommending secure alternatives.
+        *   **`public static string Encrypt(string plainText)`:**
+            *   Implement AES encryption (e.g., using `AesCryptoServiceProvider` or `Aes.Create()`).
+            *   Configure with the static `EncryptionKey`, `IV`, `CipherMode.CBC`, and `PaddingMode.PKCS7`.
+            *   Return the encrypted data as a Base64 encoded string. Handle null/empty `plainText` input (e.g., return as is or empty string).
+            *   Define conceptual unit tests for: successful encryption, encrypting empty string, encrypting null.
+        *   **`public static string Decrypt(string cipherTextBase64)`:**
+            *   Implement AES decryption. Convert Base64 input to byte array.
+            *   Use the same AES configuration.
+            *   Return the decrypted plaintext string. Handle null/empty `cipherTextBase64`.
+            *   Implement `try-catch` for `FormatException` (invalid Base64) or `CryptographicException` (decryption error), log error, and return null or throw custom exception.
+            *   Define conceptual unit tests for: successful decryption, decrypting what was just encrypted, decrypting empty/null string, handling invalid Base64, handling incorrect cipher text (decryption failure).
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 1.4: Implemented `EncryptionService.cs` with AES encryption/decryption methods for sensitive data, including internal warnings about hardcoded key/IV for production."
+    *   **Purpose:** Provides essential cryptographic functions for securing sensitive data stored in the database.
+
+*   **[ ] Step 1.5: Generate Entity Relationship Diagram (ERD)**
+    *   **[ ] Instruction:** Based on the schema defined in `SqlSchemaConstants.cs` (Step 1.0), generate a textual representation of an Entity Relationship Diagram (ERD) using Mermaid syntax. This diagram should visually represent all tables, their columns (with data types and PK/FK indicators), and the relationships between them (including cardinality and foreign key links).
+    *   **[ ] Diagram Content Requirements:**
+        *   Include all 5 tables: `Users`, `ApplicationSettings`, `AIModelConfigurations`, `AITasks`, `AITaskResults`.
+        *   For each table, list key columns, indicating primary keys (PK) and foreign keys (FK).
+        *   Visually depict relationships:
+            *   Users ||--o{ AITasks (One User to Many AITasks)
+            *   AIModelConfigurations ||--o{ AITasks (One ModelConfig to Many AITasks)
+            *   AITasks ||--|| AITaskResults (One AITask to One AITaskResult)
+    *   **[ ] Instruction (Build Log):** Log completion and include the Mermaid ERD code: "Step 1.5: Generated ERD for the database schema using Mermaid syntax. [Paste Mermaid Code Here in Log]"
+    *   **Purpose:** Provides a visual understanding of the database structure and relationships.
+
+---
+
+**Phase 2: Application Settings, User Authentication & Management**
+
+*   **[ ] Step 2.0: Implement Application Settings Data Access Layer (`ApplicationSettingsDAL.cs`)**
+    *   **[ ] Instruction:** Create the `ApplicationSettingsDAL` class in the `CSharpAIAssistant.DataAccess` project.
+    *   **[ ] Functional Requirements for `ApplicationSettingsDAL` methods (using `SQLiteHelper`):**
+        *   **Implement `public ApplicationSetting GetSettingByKey(string key)`:**
+            *   Retrieves a single `ApplicationSetting` POCO by its `SettingKey` (case-insensitive SQL query: `WHERE SettingKey = @SettingKey COLLATE NOCASE`).
+            *   Returns `null` if not found.
+            *   Define conceptual unit tests for: retrieving an existing setting, attempting to retrieve a non-existent setting.
+        *   **Implement `public List<ApplicationSetting> GetAllSettings()`:**
+            *   Retrieves all settings, ordered by `GroupName` then `SettingKey`.
+            *   Define conceptual unit tests for: retrieving all settings from a populated table, retrieving from an empty table.
+        *   **Implement `public bool UpdateSetting(ApplicationSetting setting)`:**
+            *   Updates `SettingValue`, `SettingDescription`, `DataType`, `IsSensitive`, `GroupName`, and `UpdatedAt` (to `DateTime.UtcNow`) for an existing setting identified by `setting.SettingKey`.
+            *   Returns `true` if one row was affected, `false` otherwise.
+            *   Define conceptual unit tests for: successful update, attempting to update a non-existent setting (should affect 0 rows).
+        *   **Implement `public bool InsertSetting(ApplicationSetting setting)`:**
+            *   Inserts a new `ApplicationSetting` record. `CreatedAt` should be set to `setting.CreatedAt` (usually `DateTime.UtcNow` when creating).
+            *   Returns `true` if one row was affected.
+            *   Define conceptual unit tests for: successful insert, attempting to insert a setting with a duplicate `SettingKey` (should fail due to UNIQUE constraint).
+        *   **Implement `private ApplicationSetting MapReaderToApplicationSetting(SQLiteDataReader reader)`:**
+            *   Helper method to map data from an `SQLiteDataReader` row to an `ApplicationSetting` POCO, handling `DBNull.Value` and data type conversions for all fields (e.g., SQLite INTEGER to C# bool for `IsSensitive`, TEXT to C# DateTime for date fields).
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 2.0: Implemented `ApplicationSettingsDAL.cs` with methods for CRUD operations on the `ApplicationSettings` table."
+    *   **Purpose:** Provides the foundational data access for all application configurations.
+
+*   **[ ] Step 2.1: Implement Application Settings Service Layer (`ApplicationSettingsService.cs`)**
+    *   **[ ] Instruction:** Create the `ApplicationSettingsService` class in the `CSharpAIAssistant.BusinessLogic` project.
+    *   **[ ] Functional Requirements for `ApplicationSettingsService`:**
+        *   **Constructor:** Implement a default constructor that instantiates `ApplicationSettingsDAL`. Implement an overloaded constructor accepting an `ApplicationSettingsDAL` instance for dependency injection/testability.
+        *   **Caching (for non-sensitive settings):**
+            *   Define a `private const string CacheKeyPrefix = "AppSetting_";` and `private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(15);`.
+        *   **Implement `public string GetSettingValue(string key, string defaultValue = null)`:**
+            *   Attempts to retrieve the `ApplicationSetting` from cache (e.g., `System.Web.Caching.Cache`) if not sensitive.
+            *   If not in cache or sensitive, fetches from `ApplicationSettingsDAL.GetSettingByKey(key)`.
+            *   If fetched and not sensitive, add to cache.
+            *   Returns `setting.SettingValue` or `defaultValue`. If the setting is marked `IsSensitive`, this method should return `null` or `defaultValue` to avoid exposing encrypted data through a generic getter.
+            *   Define conceptual unit tests for: retrieving a non-sensitive cached value, retrieving a non-sensitive non-cached value (then check cache), attempting to retrieve a sensitive value (should return default/null), retrieving non-existent key.
+        *   **Implement `public string GetDecryptedSettingValue(string key, string defaultValue = null)`:**
+            *   Fetches the `ApplicationSetting` from `ApplicationSettingsDAL.GetSettingByKey(key)`.
+            *   If the setting exists, is marked `IsSensitive`, its `DataType` is "EncryptedString", and `SettingValue` is not empty:
+                *   Call `EncryptionService.Decrypt(setting.SettingValue)`.
+                *   Handle potential decryption exceptions gracefully (log error, return `defaultValue`).
+            *   Otherwise, return `setting.SettingValue` (if not sensitive or not an encrypted type).
+            *   If setting does not exist, return `defaultValue`.
+            *   Define conceptual unit tests for: decrypting a valid encrypted setting, attempting to decrypt a non-sensitive setting (should return plain value), handling decryption failure, non-existent key.
+        *   **Implement strongly-typed getters:**
+            *   `public bool GetBooleanSettingValue(string key, bool defaultValue = false)` (parses result of `GetSettingValue`).
+            *   `public int GetIntegerSettingValue(string key, int defaultValue = 0)` (parses result of `GetSettingValue`).
+            *   `public double GetRealSettingValue(string key, double defaultValue = 0.0)` (parses result of `GetSettingValue`).
+            *   Define conceptual unit tests for each typed getter (valid parse, invalid parse/default value).
+        *   **Implement `public void SaveSetting(ApplicationSetting settingFromUI)`:**
+            *   Fetches the existing `ApplicationSetting` from DAL by `settingFromUI.SettingKey` or prepares to insert a new one.
+            *   If `settingFromUI.IsSensitive` and `settingFromUI.DataType == "EncryptedString"` and `settingFromUI.SettingValue` is not empty (and perhaps different from a placeholder indicating "unchanged"):
+                *   Encrypt `settingFromUI.SettingValue` using `EncryptionService.Encrypt()` before assigning it to the `SettingValue` property of the POCO to be saved.
+            *   If updating, set `UpdatedAt = DateTime.UtcNow`. If inserting, set `CreatedAt = DateTime.UtcNow`.
+            *   Call `ApplicationSettingsDAL.UpdateSetting()` or `InsertSetting()`.
+            *   Invalidate the cache entry for this setting key.
+            *   Define conceptual unit tests for: saving a new non-sensitive setting, saving a new sensitive/encrypted setting, updating an existing non-sensitive setting, updating an existing sensitive/encrypted setting (verify re-encryption if value changed).
+        *   **Implement `public List<ApplicationSetting> GetAllSettingsForAdminView()`:**
+            *   Calls `ApplicationSettingsDAL.GetAllSettings()`. Values are returned as stored (encrypted if sensitive). Decryption for display is a UI concern.
+        *   **Implement specific getters for critical configurations:**
+            *   `public string GetGoogleClientId() => GetSettingValue("GoogleClientId");`
+            *   `public string GetGoogleClientSecret() => GetDecryptedSettingValue("GoogleClientSecret_Encrypted");`
+            *   `public string GetOpenAIApiKey(string apiKeySettingKeyNameFromAIModelConfig) => GetDecryptedSettingValue(apiKeySettingKeyNameFromAIModelConfig);`
+            *   `public int GetSessionTimeoutMinutes() => GetIntegerSettingValue("SessionTimeoutMinutes", 30);`
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 2.1: Implemented `ApplicationSettingsService.cs` providing business logic for settings management, including typed getters, value decryption, and caching for non-sensitive settings."
+    *   **Purpose:** Provides a controlled and secure interface for the rest of the application to access configuration values.
+
+*   **[ ] Step 2.2: Implement User Data Access Layer (`UserDAL.cs`) and Password Hashing Service (`PasswordHasher.cs`)**
+    *   **[ ] Instruction:** Create the `UserDAL` class in the `CSharpAIAssistant.DataAccess` project.
+    *   **[ ] Functional Requirements for `UserDAL` methods (using `SQLiteHelper`):**
+        *   **Implement `public User GetUserById(int id)`:** Retrieves user by ID. Define tests.
+        *   **Implement `public User GetUserByUsername(string username)`:** Retrieves user by username (case-insensitive SQL query). Define tests (user exists, doesn't exist, null username).
+        *   **Implement `public User GetUserByEmail(string email)`:** Retrieves user by email (case-insensitive SQL query). Define tests.
+        *   **Implement `public User GetUserByGoogleId(string googleId)`:** Retrieves user by Google ID. Define tests.
+        *   **Implement `public int CreateUser(User user)`:** Inserts `user` (expects `PasswordHash` to be pre-set if applicable, `RegistrationDate` set). Returns the new `Id` using `SELECT last_insert_rowid()`. Define tests (successful creation, duplicate username/email constraint violation).
+        *   **Implement `public bool UpdateUser(User user)`:** Updates user details. Define tests (successful update of various fields).
+        *   **Implement `public List<User> GetAllUsers()`:** Retrieves all users. Define tests.
+        *   **Implement `public bool UpdateUserAdminStatus(int userId, bool isAdmin)`:** Updates `IsAdmin` flag. Define tests.
+        *   **Implement `private User MapReaderToUser(SQLiteDataReader reader)`:** Maps reader row to `User` POCO.
+    *   **[ ] Instruction:** Create the static `PasswordHasher` class in the `CSharpAIAssistant.BusinessLogic` project.
+    *   **[ ] Functional Requirements for `PasswordHasher` methods:**
+        *   **Implement `public static string HashPassword(string password)`:** Generates salt, uses `Rfc2898DeriveBytes` (SHA256, >=10000 iterations), combines salt+hash, returns Base64 string. Define tests (output is not null/empty, different passwords yield different hashes).
+        *   **Implement `public static bool VerifyPassword(string password, string storedSaltedHash)`:** Decodes Base64, extracts salt, re-hashes input password with extracted salt, performs constant-time comparison. Define tests (correct password verifies, incorrect password fails, handles invalid hash format).
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 2.2: Implemented `UserDAL.cs` for user data operations and `PasswordHasher.cs` for secure password handling."
+    *   **Purpose:** Provides data access for user entities and robust password security.
+
+*   **[ ] Step 2.3: Implement User Authentication Web Forms (Login, Register, Logout)**
+    *   **[ ] Instruction:** Create `.aspx` pages (with `.aspx.cs` and `.aspx.designer.cs`) in `CSharpAIAssistant.Web/Account/`. All inherit `Site.Master`.
+        *   **`Register.aspx`:**
+            *   UI: TextBoxes for Username, Email, Password, Confirm Password; Register Button; error display area.
+            *   Logic (`RegisterButton_Click`): Validate input. Check for existing username/email via `UserDAL`. Hash password via `PasswordHasher`. Create `User` POCO. Call `UserDAL.CreateUser()`. Redirect to `Login.aspx` on success.
+        *   **`Login.aspx`:**
+            *   UI: TextBoxes for Username, Password; "Remember Me" CheckBox; "Login" Button; "Login with Google" Button; link to Register page; error display area.
+            *   Logic (`LoginButton_Click`): Validate. Fetch `User` via `UserDAL`. Verify password via `PasswordHasher`. If valid, call `FormsAuthentication.SetAuthCookie()`, store `UserId` and `IsAdmin` in `Session`, update `LastLoginDate`, redirect to default authenticated page.
+            *   Logic (`LoginWithGoogleButton_Click`): Initiate Google OAuth challenge: `Context.GetOwinContext().Authentication.Challenge(new AuthenticationProperties { RedirectUri = ResolveUrl("~/Account/ExternalLoginCallback.aspx") }, "Google");`.
+        *   **`Logout.aspx`:**
+            *   Logic (`Page_Load`): Call `FormsAuthentication.SignOut()`, clear/abandon `Session`, redirect to `Login.aspx`.
+    *   **[ ] Instruction (Frontend):** Apply Bootstrap styling to these forms.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 2.3: Implemented Web Forms for User Registration, Login (Forms & Google trigger), and Logout. Integrated `UserDAL` and `PasswordHasher`."
+    *   **Purpose:** Provides the application's primary user authentication interfaces.
+
+*   **[ ] Step 2.4: Implement OWIN Startup & Google Authentication Logic**
+    *   **[ ] Instruction:** Create `Startup.cs` in `CSharpAIAssistant.Web/`.
+        *   Add `[assembly: OwinStartup(typeof(CSharpAIAssistant.Web.Startup))]`.
+        *   Implement `public void Configuration(IAppBuilder app)`:
+            1.  Instantiate `ApplicationSettingsService`.
+            2.  Retrieve Google Client ID and Secret using service methods.
+            3.  If ID/Secret are invalid/placeholders, log warning and skip Google Auth setup.
+            4.  Configure Cookie Authentication: `app.UseCookieAuthentication(new CookieAuthenticationOptions { AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie, LoginPath = new PathString("/Account/Login.aspx"), CookieName = "CSharpAIAssistantAuth", SlidingExpiration = true, ExpireTimeSpan = TimeSpan.FromMinutes(settingsService.GetSessionTimeoutMinutes()) });`.
+            5.  `app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);`.
+            6.  If Google settings valid: `app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions { ClientId = ..., ClientSecret = ..., Provider = new GoogleOAuth2AuthenticationProvider { OnAuthenticated = async context => { /* Store necessary claims like AccessToken, Email, NameIdentifier on context.Identity for the callback page */ } } });`.
+    *   **[ ] Instruction:** Create `ExternalLoginCallback.aspx` in `CSharpAIAssistant.Web/Account/`.
+        *   Logic (`Page_Load`):
+            1.  Get `ExternalLoginInfo` from `Context.GetOwinContext().Authentication`.
+            2.  If null, redirect to `Login.aspx` with error.
+            3.  Extract `googleProviderKey`, `email`, `usernameFromGoogle` from `loginInfo`.
+            4.  Instantiate `UserDAL`. Try to find user by `googleProviderKey`, then by `email`.
+            5.  **User Provisioning/Linking:** If new user, create one with a unique username, `GoogleId`, and `Email`. If existing user found by email but `GoogleId` is null, link it by updating the user record.
+            6.  If user identified/created: Call `FormsAuthentication.SetAuthCookie()`, store `UserId` and `IsAdmin` in `Session`, update `LastLoginDate`.
+            7.  `Context.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);`.
+            8.  Redirect to default authenticated page.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 2.4: Implemented OWIN `Startup.cs` for Google Authentication using database-driven settings. Implemented `ExternalLoginCallback.aspx` for user provisioning/linking after Google login."
+    *   **Purpose:** Configures and handles the Google OAuth 2.0 authentication flow.
+
+*   **[ ] Step 2.5: Implement Secure Admin Settings Page (`Admin/Settings.aspx`)**
+    *   **[ ] Instruction:** Create `Settings.aspx` in `CSharpAIAssistant.Web/Admin/`.
+    *   **[ ] Functional Requirements:**
+        *   **Authorization (`Page_Load`):** Verify `Session["IsAdmin"] == true`. Redirect if not admin.
+        *   **UI:** `asp:CheckBox ID="chkShowSensitive"` (visible only to admins via code-behind). `asp:GridView` to display/edit all `ApplicationSettings`.
+            *   `GridView` Columns: Key (read-only), Value (TextBox in edit), Description, DataType (read-only), GroupName. CommandField for Edit/Update/Cancel.
+        *   **Data Binding (`BindSettingsGrid()`):** Fetch settings via `ApplicationSettingsService.GetAllSettingsForAdminView()`.
+        *   **Privileged View (`gvSettings_RowDataBound`, `chkShowSensitive_CheckedChanged`):**
+            *   If `IsSensitive` and `chkShowSensitive` is unchecked (and not edit mode for value cell), display "********" for value.
+            *   If `IsSensitive` and `chkShowSensitive` is checked, display decrypted value (fetched via `ApplicationSettingsService.GetDecryptedSettingValue()`).
+            *   Rebind grid when `chkShowSensitive` changes.
+        *   **Updating Settings (`gvSettings_RowUpdating`):**
+            *   Get original `ApplicationSetting` via service. Update its properties from form controls.
+            *   If the setting is sensitive and value is being changed, the `ApplicationSettingsService.SaveSetting()` method (which takes the POCO) will handle re-encrypting the new plaintext value.
+            *   Call `ApplicationSettingsService.SaveSetting()`. Rebind grid.
+    *   **[ ] Instruction (Frontend):** Style with Bootstrap.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 2.5: Implemented `Admin/Settings.aspx` for CRUD management of application settings, including a privileged view for decrypted sensitive data, accessible only to administrators."
+    *   **Purpose:** Provides a secure interface for administrators to manage all application configurations.
+
+*   **[ ] Step 2.6: Implement User Management Page (`Admin/UserManagement.aspx`)**
+    *   **[ ] Instruction:** Create `UserManagement.aspx` in `CSharpAIAssistant.Web/Admin/`.
+    *   **[ ] Functional Requirements:**
+        *   **Authorization (`Page_Load`):** Verify `Session["IsAdmin"] == true`.
+        *   **UI:** `asp:GridView` to display all users.
+            *   Columns: Username, Email, RegistrationDate, LastLoginDate, `IsAdmin` (TemplateField with an `asp:CheckBox`).
+        *   **Data Binding (`BindUsersGrid()`):** Fetch all users via `UserDAL.GetAllUsers()`.
+        *   **Modifying Admin Status (`gvUsers_RowDataBound`, `IsAdminCheckBox_CheckedChanged`):**
+            *   In `RowDataBound`, set `CheckBox.Checked` based on `user.IsAdmin`. Disable checkbox for the currently logged-in admin to prevent self-demotion (or add more complex logic for last admin).
+            *   In `IsAdminCheckBox_CheckedChanged`, get `UserId` from `GridView.DataKeys`. Call `UserDAL.UpdateUserAdminStatus()`. Rebind grid.
+    *   **[ ] Instruction (Frontend):** Style with Bootstrap.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 2.6: Implemented `Admin/UserManagement.aspx` allowing administrators to view all users and promote/demote their admin status."
+    *   **Purpose:** Enables administrators to manage user roles within the application.
+
+---
+
+**Phase 3: AI Model & Task Functionality Core**
+
+*   **[ ] Step 3.0: Implement Data Access Layer for AI Features**
+    *   **[ ] Instruction:** Create `AIModelConfigurationDAL.cs` in the `CSharpAIAssistant.DataAccess` project.
+        *   **Functional Requirements for `AIModelConfigurationDAL` methods (using `SQLiteHelper`):**
+            *   **Implement `public List<AIModelConfiguration> GetAll()`:** Retrieves all records. Define tests.
+            *   **Implement `public List<AIModelConfiguration> GetActiveModels()`:** Retrieves records where `IsActive = 1`. Define tests.
+            *   **Implement `public AIModelConfiguration GetById(int id)`:** Retrieves by primary key. Define tests.
+            *   **Implement `public bool Insert(AIModelConfiguration config)`:** Sets `CreatedAt = DateTime.UtcNow`. Define tests.
+            *   **Implement `public bool Update(AIModelConfiguration config)`:** Sets `UpdatedAt = DateTime.UtcNow`. Define tests.
+            *   **Implement `private AIModelConfiguration MapReaderToAIModelConfiguration(SQLiteDataReader reader)`:** Maps reader to POCO.
+    *   **[ ] Instruction:** Create `AITaskDAL.cs` in the `CSharpAIAssistant.DataAccess` project.
+        *   **Functional Requirements for `AITaskDAL` methods (using `SQLiteHelper`):**
+            *   **Implement `public int Insert(AITask task)`:** Sets `CreatedAt = DateTime.UtcNow`. Returns new `Id` (using `last_insert_rowid()`). Define tests.
+            *   **Implement `public AITask GetById(int id)`:** Retrieves by primary key. Define tests.
+            *   **Implement `public List<AITask> GetByUserId(int userId, int pageNumber, int pageSize)`:** Retrieves tasks for a user with pagination (SQL `LIMIT` and `OFFSET`), ordered by `CreatedAt` descending. Define tests (with/without results, pagination logic).
+            *   **Implement `public bool UpdateStatus(int taskId, string newStatus, DateTime eventTime, string errorMessage = null)`:** Updates `Status`. Conditionally updates `QueuedAt`, `ProcessingStartedAt`, or `CompletedAt` to `eventTime` based on `newStatus`. Updates `ErrorMessage` if provided. Define tests (each status transition).
+            *   **Implement `public List<AITask> GetQueuedTasks(int limit)`:** Retrieves tasks with `Status = "Queued"`, ordered by `QueuedAt` ascending, limited by `limit`. Define tests.
+            *   **Implement `private AITask MapReaderToAITask(SQLiteDataReader reader)`:** Maps reader to POCO.
+    *   **[ ] Instruction:** Create `AITaskResultDAL.cs` in the `CSharpAIAssistant.DataAccess` project.
+        *   **Functional Requirements for `AITaskResultDAL` methods (using `SQLiteHelper`):**
+            *   **Implement `public bool Insert(AITaskResult result)`:** Sets `CreatedAt = DateTime.UtcNow`. Define tests.
+            *   **Implement `public AITaskResult GetByAITaskId(int aiTaskId)`:** Retrieves by `AITaskId`. Define tests.
+            *   **Implement `private AITaskResult MapReaderToAITaskResult(SQLiteDataReader reader)`:** Maps reader to POCO.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 3.0: Implemented DAL classes: `AIModelConfigurationDAL.cs`, `AITaskDAL.cs`, and `AITaskResultDAL.cs` for managing AI-related data entities."
+    *   **Purpose:** Provides the data persistence mechanisms for all AI-specific entities.
+
+*   **[ ] Step 3.1: Implement Business Services for AI Features**
+    *   **[ ] Instruction:** Create `AIModelConfigurationService.cs` in the `CSharpAIAssistant.BusinessLogic` project.
+        *   **Functional Requirements for `AIModelConfigurationService` methods:**
+            *   Constructor instantiates `AIModelConfigurationDAL`.
+            *   **Implement `public List<AIModelConfiguration> GetActiveModelsForUserSelection()`:** Calls `AIModelConfigurationDAL.GetActiveModels()`. Define tests.
+            *   **Implement `public AIModelConfiguration GetModelById(int id)`:** Calls `AIModelConfigurationDAL.GetById(id)`. Define tests.
+            *   **Implement `public List<AIModelConfiguration> GetAllModelsForAdmin()`:** Calls `AIModelConfigurationDAL.GetAll()`. Define tests.
+            *   **Implement `public bool SaveModelConfiguration(AIModelConfiguration config)`:** If `config.Id > 0`, calls `DAL.Update()`; else, calls `DAL.Insert()`. Define tests (insert new, update existing).
+    *   **[ ] Instruction:** Create `AITaskService.cs` in the `CSharpAIAssistant.BusinessLogic` project.
+        *   **Functional Requirements for `AITaskService` methods:**
+            *   Constructor instantiates `AITaskDAL`, `AITaskResultDAL`, `ApplicationSettingsService`, `AIModelConfigurationService`.
+            *   **Implement `public int CreateNewTask(int userId, int aiModelConfigurationId, string taskName, string promptText, int? maxTokensOverride, double? temperatureOverride)`:**
+                1.  Create `AITask` POCO. Set provided user/model details, name, prompt.
+                2.  Fetch the `AIModelConfiguration` using `AIModelConfigurationService.GetModelById(aiModelConfigurationId)`.
+                3.  Determine `MaxTokens`: use `maxTokensOverride` if provided, else `modelConfig.DefaultMaxTokens`, else default from `ApplicationSettingsService.GetIntegerSettingValue("DefaultAITaskMaxTokens")`.
+                4.  Determine `Temperature`: use `temperatureOverride` if provided, else `modelConfig.DefaultTemperature`, else default from `ApplicationSettingsService.GetRealSettingValue("DefaultAITaskTemperature")`.
+                5.  Set `task.Status = "Pending"`, `task.CreatedAt = DateTime.UtcNow`.
+                6.  `int newTaskId = _aiTaskDAL.Insert(task);`.
+                7.  If `newTaskId > 0`: `_aiTaskDAL.UpdateStatus(newTaskId, "Queued", DateTime.UtcNow); AITaskProcessor.QueueTask(newTaskId);`.
+                8.  Return `newTaskId`.
+                9.  Define conceptual unit tests for: successful task creation and queuing, handling invalid `aiModelConfigurationId`.
+            *   **Implement `public List<AITask> GetUserTasks(int userId, int pageNumber = 1, int pageSize = 20)`:** Calls `AITaskDAL.GetByUserId()`. Define tests.
+            *   **Implement `public Tuple<AITask, AITaskResult> GetTaskDetailsWithResult(int taskId, int userId)`:**
+                1.  Fetch `AITask` via `_aiTaskDAL.GetById(taskId)`.
+                2.  If task is null or `task.UserId != userId` (and current user is not admin - requires passing admin status or having a way to check it), return null or throw authorization exception.
+                3.  Fetch `AITaskResult` via `_aiTaskResultDAL.GetByAITaskId(taskId)`.
+                4.  Return `Tuple.Create(task, result)`.
+                5.  Define conceptual unit tests for: retrieving existing task/result for authorized user, attempting to retrieve task for unauthorized user, task with no result yet.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 3.1: Implemented Business Service layers: `AIModelConfigurationService.cs` and `AITaskService.cs` for AI feature orchestration."
+    *   **Purpose:** Encapsulates business logic for AI model and task management, decoupling UI from direct data access.
+
+*   **[ ] Step 3.2: Implement Task Creation User Interface (`Tasks/CreateTask.aspx`)**
+    *   **[ ] Instruction:** Create `CreateTask.aspx` (with `.aspx.cs` and `.aspx.designer.cs`) in `CSharpAIAssistant.Web/Tasks/`. It must inherit `Site.Master`.
+    *   **[ ] Functional Requirements:**
+        *   **Authorization (`Page_Load`):** Verify `User.Identity.IsAuthenticated`. Redirect to Login if not.
+        *   **Data Population (`Page_Load`, if `!IsPostBack`):**
+            *   Instantiate `AIModelConfigurationService` and `ApplicationSettingsService`.
+            *   Populate `asp:DropDownList ID="ddlAIModels"`: Use `aiModelConfigService.GetActiveModelsForUserSelection()`, binding `DisplayName` to `Text` and `Id` to `Value`.
+            *   Pre-fill `asp:TextBox ID="txtMaxTokens"` and `asp:TextBox ID="txtTemperature"` with default values from `ApplicationSettingsService` (e.g., "DefaultAITaskMaxTokens", "DefaultAITaskTemperature").
+        *   **UI Markup:**
+            *   Controls: `asp:TextBox ID="txtTaskName"` (optional), `asp:TextBox ID="txtPrompt"` (MultiLine, required), `ddlAIModels`, `txtMaxTokens` (numeric), `txtTemperature` (numeric, range 0.0-2.0).
+            *   `asp:Button ID="btnSubmitTask"` and `asp:Literal ID="litMessage"` for feedback.
+        *   **Submission Logic (`btnSubmitTask_Click`):**
+            1.  Retrieve `userId` from `Session["UserId"]`.
+            2.  Validate inputs: `txtPrompt` not empty, `ddlAIModels` has a selection. Parse `txtMaxTokens` and `txtTemperature` if values are provided; ensure they are valid numbers.
+            3.  Instantiate `AITaskService`. Call `service.CreateNewTask()` with validated inputs.
+            4.  Display success/failure message in `litMessage`. On success, consider redirecting to `TaskList.aspx` or clearing the form.
+    *   **[ ] Instruction (Frontend):** Style the page using Bootstrap for a user-friendly form.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 3.2: Implemented `Tasks/CreateTask.aspx` for user AI task submission, including model selection and parameter inputs."
+    *   **Purpose:** Provides the primary interface for users to initiate AI tasks.
+
+*   **[ ] Step 3.3: Implement Background Task Processor (`AITaskProcessor.cs`)**
+    *   **[ ] Instruction:** Create the static class `AITaskProcessor` in `CSharpAIAssistant.BusinessLogic`.
+    *   **[ ] Functional Requirements:**
+        *   **State:** `private static readonly ConcurrentQueue<int> _taskQueue;`, `private static readonly SemaphoreSlim _signal;`, `private static Thread _processorThread;`, `private static volatile bool _shuttingDown;`. Initialize queue and semaphore in static constructor.
+        *   **Implement `public static void Start()`:** (Called from `Global.asax Application_Start`)
+            *   Sets `_shuttingDown = false;`. Creates and starts `_processorThread` (background, targeting `ProcessorLoop`).
+        *   **Implement `public static void Stop()`:** (Called from `Global.asax Application_End`)
+            *   Sets `_shuttingDown = true; _signal.Release();`. Joins `_processorThread` with a timeout.
+        *   **Implement `public static void QueueTask(int taskId)`:** Enqueues `taskId`, releases `_signal`.
+        *   **Implement `private static void ProcessorLoop()`:**
+            *   **Dependency Instantiation (within loop for thread safety or pass if thread parameters were used; for static, instantiation inside is safer):** `AITaskDAL`, `AITaskResultDAL`, `AIModelConfigurationService`, `ApplicationSettingsService`, `IAIService` (initially `MockAIService`, later `OpenAIService`).
+            *   Main loop: `while (!_shuttingDown)`
+                1.  `_signal.Wait(); if (_shuttingDown) break;`
+                2.  `if (_taskQueue.TryDequeue(out int taskId))`:
+                    *   Wrap the following in a `try-catch` block for robust error handling per task.
+                    *   Fetch `AITask` using `AITaskDAL`. If null or status not "Queued", log and continue.
+                    *   Update task status to "Processing" via `AITaskDAL`.
+                    *   Fetch `AIModelConfiguration` via `AIModelConfigurationService`. If null/inactive, update task to "Failed" and continue.
+                    *   Fetch API key using `ApplicationSettingsService.GetOpenAIApiKey(modelConfig.OpenAISettingKeyForApiKey)`. If null/empty/placeholder, update task to "Failed" and continue.
+                    *   Call `aiService.ProcessPrompt(task, modelConfig, apiKey)`.
+                    *   Create `AITaskResult` from `AIResponse`. Save via `AITaskResultDAL`.
+                    *   Update `AITask` status to "Completed" or "Failed" (with `ErrorMessage`) via `AITaskDAL`.
+                    *   Log details of processing (success/failure, task ID).
+                3.  In `catch` block: Log exception, update task status to "Failed" with generic error message.
+    *   **[ ] Instruction (Global.asax):** Ensure `AITaskProcessor.Start()` and `Stop()` are called appropriately.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 3.3: Implemented `AITaskProcessor.cs` as a static background service using a thread, queue, and semaphore for asynchronous AI task processing."
+    *   **Purpose:** Creates the asynchronous engine that executes AI tasks without blocking the user interface.
+
+*   **[ ] Step 3.4: Define `IAIService` Interface and `MockAIService` Implementation**
+    *   **[ ] Instruction:** Create the `IAIService` interface in `CSharpAIAssistant.Models/Interfaces/`.
+        *   Define method: `AIResponse ProcessPrompt(AITask task, AIModelConfiguration modelConfig, string apiKey);`
+    *   **[ ] Instruction:** Create the `AIResponse` POCO class in `CSharpAIAssistant.Models/`.
+        *   Properties: `bool Success`, `string GeneratedText`, `string ErrorMessage`, `int? TokensUsedPrompt`, `int? TokensUsedCompletion`, `int? TokensUsedTotal`, `long? ProcessingTimeMs`, `string ModelUsed`.
+    *   **[ ] Instruction:** Create `MockAIService.cs` in `CSharpAIAssistant.BusinessLogic/` implementing `IAIService`.
+        *   Implement `ProcessPrompt`: Simulate a delay (e.g., `Thread.Sleep(1000)`). Return a fixed `AIResponse` object (e.g., `Success=true`, `GeneratedText="Mock response for: " + task.PromptText`, mock token counts).
+        *   Define conceptual unit tests for: `MockAIService` returning expected mock data.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 3.4: Defined `IAIService` interface and `AIResponse` model. Implemented `MockAIService` for initial AI interaction simulation."
+    *   **Purpose:** Establishes the abstraction for AI model interactions and provides a test double.
+
+*   **[ ] Step 3.5: Implement Task List & Details User Interfaces**
+    *   **[ ] Instruction:** Create `TaskList.aspx` (with `.aspx.cs` and `.aspx.designer.cs`) in `CSharpAIAssistant.Web/Tasks/`. Inherits `Site.Master`.
+        *   **Authorization (`Page_Load`):** Verify authenticated user.
+        *   **Data Binding (`Page_Load`, if `!IsPostBack`):** Get `userId` from `Session`. Fetch user's tasks via `AITaskService.GetUserTasks()` (implement pagination here or in service). Bind to `asp:GridView ID="gvTasks"`.
+        *   **UI (`gvTasks`):** Columns for Task Name, AI Model (`DisplayName`), Status, CreatedAt. Include an `asp:HyperLink` in a TemplateField to `TaskDetails.aspx?taskId={AITask.Id}`.
+    *   **[ ] Instruction:** Create `TaskDetails.aspx` (with `.aspx.cs` and `.aspx.designer.cs`) in `CSharpAIAssistant.Web/Tasks/`. Inherits `Site.Master`.
+        *   **Authorization (`Page_Load`):** Verify authenticated user.
+        *   **Data Retrieval (`Page_Load`):** Get `userId` from `Session`. Get `taskId` from `Request.QueryString`. Call `AITaskService.GetTaskDetailsWithResult(taskId, userId)`.
+        *   **UI:** If task/result found and authorized, display all details from `AITask` POCO (Prompt, Status, Timestamps, Model Info) and `AITaskResult` POCO (Generated Content, Token Usage, Processing Time, Error Message if failed) using `asp:Label` controls. Display "Not processed yet" or similar if result is null. Handle unauthorized access or task not found with messages.
+    *   **[ ] Instruction (Frontend):** Style pages with Bootstrap.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 3.5: Implemented `Tasks/TaskList.aspx` and `Tasks/TaskDetails.aspx` for users to view their AI task history and results."
+    *   **Purpose:** Provides users with visibility into their AI task interactions.
+
+*   **[ ] Step 3.6: Generate Workflow Diagram**
+    *   **[ ] Instruction:** Based on the application flow established for task creation, queuing, processing, and result viewing, generate a textual representation of a Workflow Diagram using Mermaid syntax (specifically a sequence diagram or activity diagram).
+    *   **[ ] Diagram Content Requirements:** Illustrate the sequence of interactions:
+        1.  User submits task via `CreateTask.aspx`.
+        2.  Controller/Code-behind calls `AITaskService.CreateNewTask()`.
+        3.  `AITaskService` creates task in DB (status "Pending"), then queues to `AITaskProcessor` and updates status to "Queued".
+        4.  `AITaskProcessor` dequeues, updates status to "Processing".
+        5.  `AITaskProcessor` calls `IAIService.ProcessPrompt()`.
+        6.  `IAIService` (e.g., `OpenAIService`) interacts with external AI API.
+        7.  `AITaskProcessor` receives `AIResponse`, creates `AITaskResult` in DB.
+        8.  `AITaskProcessor` updates task status to "Completed" or "Failed".
+        9.  User views task list/details, data is fetched from DB.
+    *   **[ ] Instruction (Build Log):** Log completion and include the Mermaid diagram code: "Step 3.6: Generated application workflow diagram using Mermaid syntax. [Paste Mermaid Code Here in Log]"
+    *   **Purpose:** Visually documents the primary operational flow of the AI tasking system.
+
+---
+
+**Phase 4: Real OpenAI Integration & Advanced Admin UI**
+
+*   **[ ] Step 4.0: Implement Live OpenAI Service (`OpenAIService.cs`)**
+    *   **[ ] Instruction:** Create the `OpenAIService` class in `CSharpAIAssistant.BusinessLogic`, ensuring it implements the `IAIService` interface.
+    *   **[ ] Functional Requirements for `OpenAIService.ProcessPrompt(AITask task, AIModelConfiguration modelConfig, string apiKey)` method:**
+        1.  **HttpClient Usage:** Utilize a `private static readonly HttpClient httpClient = new HttpClient();`. Consider configuring `httpClient.Timeout` (e.g., to 120 seconds) in a static constructor.
+        2.  **API Endpoint Determination:** Define the OpenAI API endpoint (e.g., `https://api.openai.com/v1/chat/completions`) as a constant or retrieve from `ApplicationSettings` for flexibility.
+        3.  **Request Payload Construction (JSON):**
+            *   Create a C# anonymous object or a dedicated request DTO to match the OpenAI Chat Completions API's expected JSON structure.
+            *   Populate the request with:
+                *   `model`: `modelConfig.ModelIdentifier`
+                *   `messages`: An array containing at least one message object: `[new { role = "user", content = task.PromptText }]`. Consider supporting system messages if a more advanced prompt structure is desired later.
+                *   `max_tokens`: Use `task.MaxTokens` if provided, otherwise `modelConfig.DefaultMaxTokens`, falling back to a global default from `ApplicationSettings`. Enforce a reasonable application-defined maximum to prevent excessive costs.
+                *   `temperature`: Use `task.Temperature` if provided, otherwise `modelConfig.DefaultTemperature`, falling back to a global default.
+            *   Serialize this request object to a JSON string using `Newtonsoft.Json.JsonConvert.SerializeObject()`.
+        4.  **API Call Execution:**
+            *   Wrap the entire API call in a `try-catch` block to handle `HttpRequestException`, `TaskCanceledException` (for timeouts), and other potential network or API issues.
+            *   Start a `System.Diagnostics.Stopwatch` before the call.
+            *   Create an `HttpRequestMessage(HttpMethod.Post, openAiApiEndpoint)`.
+            *   Set headers: `request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);`.
+            *   Set content: `request.Content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");`.
+            *   Execute the request: `HttpResponseMessage httpResponse = httpClient.SendAsync(request).Result;` (Using `.Result` for synchronous execution within the likely synchronous background thread. If the processor loop is `async`, `await` can be used).
+            *   Stop the `Stopwatch`.
+        5.  **Response Processing & Mapping to `AIResponse` POCO:**
+            *   `string responseBody = httpResponse.Content.ReadAsStringAsync().Result;`.
+            *   Initialize an `AIResponse` object. Set `aiResponse.ProcessingTimeMs = stopwatch.ElapsedMilliseconds; aiResponse.ModelUsed = modelConfig.ModelIdentifier;`.
+            *   If `httpResponse.IsSuccessStatusCode`:
+                *   Deserialize `responseBody` into a temporary DTO representing OpenAI's successful response structure (which includes `choices` array and `usage` object).
+                *   Extract the generated text from the appropriate part of the deserialized response (e.g., `openAIResponse.choices[0].message.content`). Set `aiResponse.GeneratedText`.
+                *   Extract token usage information (`prompt_tokens`, `completion_tokens`, `total_tokens`) from `openAIResponse.usage`. Set the corresponding `aiResponse.TokensUsed...` properties.
+                *   Set `aiResponse.Success = true;`.
+            *   Else (API returned an error status code):
+                *   Set `aiResponse.Success = false;`.
+                *   Attempt to deserialize `responseBody` into an OpenAI error DTO to extract a structured error message.
+                *   Set `aiResponse.ErrorMessage = $"OpenAI API Error ({httpResponse.StatusCode}): {structuredError?.error?.message ?? responseBody}";`.
+                *   Log the full `responseBody` and `httpResponse.StatusCode` for diagnostic purposes.
+        6.  **Return `AIResponse`:** In both success and handled failure cases (including exceptions caught by the outer try-catch), ensure a populated `AIResponse` object is returned. For exceptions, `Success` should be false and `ErrorMessage` should reflect the exception.
+        *   Define conceptual unit tests for `OpenAIService` (these would typically require mocking `HttpClient` or `HttpMessageHandler`):
+            *   Successful API call and response mapping.
+            *   Handling of API error status codes (e.g., 401, 429, 500) and correct `AIResponse` population.
+            *   Handling of network exceptions during the API call.
+            *   Correct usage of API key and request parameters.
+    *   **[ ] Instruction (AITaskProcessor Update):** Modify `AITaskProcessor.cs` (Step 3.3).
+        *   Change the instantiation of `IAIService` from `MockAIService` to `OpenAIService`.
+        *   Alternatively, make the `IAIService` implementation selectable via an `ApplicationSetting` (e.g., a setting "UseMockAIService" which is true/false), allowing easy toggling between mock and live services for development or testing.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 4.0: Implemented `OpenAIService.cs` for live interaction with the OpenAI Chat Completions API, including request construction, response parsing, error handling, and token usage tracking. Updated `AITaskProcessor` to utilize this service."
+    *   **Purpose:** Enables the application to perform real AI-powered text generation using the configured OpenAI API.
+
+*   **[ ] Step 4.1: Implement Admin User Interface for AI Model Configurations (`Admin/AIModels.aspx`)**
+    *   **[ ] Instruction:** Create `AIModels.aspx` (with `.aspx.cs` and `.aspx.designer.cs`) in `CSharpAIAssistant.Web/Admin/`. It must inherit `Site.Master`.
+    *   **[ ] Functional Requirements:**
+        *   **Authorization (`Page_Load`):** Verify `Session["IsAdmin"] == true`. Redirect if not admin.
+        *   **Data Population (`Page_Load`, if `!IsPostBack`):** Call `BindModelsGrid()`.
+        *   **UI Markup:**
+            *   `asp:Button ID="btnAddNewModel"` for initiating the creation of a new model configuration (e.g., by setting GridView to insert mode or showing a separate panel).
+            *   `asp:GridView ID="gvAIModels"` for displaying and managing `AIModelConfiguration`s.
+                *   `DataKeyNames="Id"`.
+                *   Columns for: `DisplayName` (TextBox in edit), `ModelIdentifier` (TextBox in edit, e.g., "gpt-3.5-turbo"), `OpenAISettingKeyForApiKey` (Label in view, `asp:DropDownList` in edit/insert), `DefaultMaxTokens` (TextBox in edit, numeric), `DefaultTemperature` (TextBox in edit, numeric 0.0-2.0), `IsActive` (`asp:CheckBox` in edit/view), `Notes` (TextBox MultiLine in edit).
+                *   CommandField for Edit/Update/Cancel and Delete.
+        *   **Code-Behind Logic:**
+            *   **`BindModelsGrid()`:** Instantiate `AIModelConfigurationService`. Call `service.GetAllModelsForAdmin()`. Bind to `gvAIModels`.
+            *   **`PopulateApiKeyDropdown(DropDownList ddlToPopulate, string selectedValue = null)`:**
+                1.  Instantiate `ApplicationSettingsService`.
+                2.  Fetch settings: `var apiKeySettings = settingsService.GetAllSettingsForAdminView().Where(s => s.DataType == "EncryptedString" && (s.GroupName == "AI" || s.SettingKey.ToLower().Contains("apikey"))).OrderBy(s => s.SettingKey).ToList();` (Filter for relevant API key settings from `ApplicationSettings`).
+                3.  Bind `apiKeySettings` to `ddlToPopulate` (`SettingKey` as `DataValueField`, `SettingKey` (or `SettingDescription`) as `DataTextField`).
+                4.  Add a default "-- Select API Key Setting --" item with an empty value.
+                5.  If `selectedValue` is provided, attempt to set `ddlToPopulate.SelectedValue`.
+            *   **`gvAIModels_RowEditing`:** Set `gvAIModels.EditIndex = e.NewEditIndex; BindModelsGrid();`.
+            *   **`gvAIModels_RowCancelingEdit`:** Set `gvAIModels.EditIndex = -1; BindModelsGrid();`.
+            *   **`gvAIModels_RowDataBound`:**
+                *   If `e.Row.RowType == DataControlRowType.DataRow` and the row is in edit mode (`(e.Row.RowState & DataControlRowState.Edit) > 0`):
+                    *   Find the `DropDownList` for `OpenAISettingKeyForApiKey`.
+                    *   Call `PopulateApiKeyDropdown()` to fill it.
+                    *   Get the current `AIModelConfiguration` for the row (`e.Row.DataItem as AIModelConfiguration`). Set the `DropDownList.SelectedValue = currentConfig.OpenAISettingKeyForApiKey;`.
+            *   **`gvAIModels_RowUpdating`:**
+                1.  Retrieve `Id` from `gvAIModels.DataKeys[e.RowIndex].Value`.
+                2.  Find controls in the `GridViewRow` (e.g., `TextBox txtDisplayName = e.Row.FindControl("txtDisplayName") as TextBox;`) to get all updated values including the selected `OpenAISettingKeyForApiKey` from its `DropDownList`.
+                3.  Validate inputs (e.g., ModelIdentifier not empty, numeric fields valid).
+                4.  Instantiate `AIModelConfigurationService`. Fetch the original `AIModelConfiguration` object using `service.GetModelById(id)`.
+                5.  Update the properties of this fetched object with the new values from the form controls.
+                6.  Call `service.SaveModelConfiguration(updatedConfig)`.
+                7.  Set `gvAIModels.EditIndex = -1; BindModelsGrid();`.
+            *   **`gvAIModels_RowDeleting`:** (Consider if this should be a hard delete or a soft delete by setting `IsActive = false`).
+                *   Retrieve `Id`. Instantiate service. Call a `service.DeleteModelConfiguration(id)` method (which would call `DAL.Delete()`). Handle potential foreign key constraint errors if tasks are linked and `ON DELETE RESTRICT` is active (inform admin they must ensure no tasks use the model or deactivate it). Rebind grid.
+            *   **`btnAddNewModel_Click` (or logic for GridView Footer insert):**
+                *   Change GridView to show footer for insert, or display a separate form panel.
+                *   When submitting the new model: Collect all input values similar to `RowUpdating`. Create a *new* `AIModelConfiguration` POCO. Call `service.SaveModelConfiguration(newConfig)`. Rebind grid.
+    *   **[ ] Instruction (Frontend):** Style with Bootstrap for a clear and functional admin interface.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 4.1: Implemented `Admin/AIModels.aspx` for CRUD management of AI Model Configurations, including dynamic population of API Key settings from `ApplicationSettings` for association."
+    *   **Purpose:** Provides administrators with the necessary tools to configure which AI models the application can use and to link them securely to their respective API keys.
+
+
+---
+
+**Phase 5: Finalization, Documentation & Review**
+
+*   **[ ] Step 5.0: Comprehensive System Review**
+    *   **[ ] Instruction:** Conduct a thorough conceptual review of the entire application's codebase, configuration, and user flow, focusing on:
+        1.  **Security Audit (Conceptual):**
+            *   Re-verify SQL Injection prevention (all `SQLiteHelper` calls use parameters).
+            *   Re-verify XSS mitigation (ASP.NET Web Forms defaults, review custom JavaScript data handling).
+            *   Re-verify CSRF protection (ViewState, consider `ViewStateUserKey`).
+            *   Confirm robust Authentication & Authorization checks on all protected pages/actions, especially admin functionalities (`Session["IsAdmin"]`).
+            *   Validate secure Forms Authentication cookie settings (HttpOnly, Secure flag if HTTPS).
+            *   Confirm `EncryptionService` usage for all sensitive settings and that the hardcoded key/IV warning is present.
+            *   Ensure API keys are never exposed client-side or in non-sensitive logs.
+            *   Confirm production error messages (via `customErrors`) do not leak sensitive system details.
+        2.  **Error Handling & Robustness:**
+            *   Ensure critical operations (DB access, API calls, background processing, file I/O for DB creation) have comprehensive `try-catch` blocks.
+            *   Confirm errors are logged (even if to `System.Diagnostics.Trace` for this build).
+            *   Verify user-facing error messages are informative but not overly technical.
+            *   Assess application behavior if critical `ApplicationSettings` are missing or malformed.
+        3.  **Data Integrity & Validation:**
+            *   Confirm foreign key constraints are correctly defined in DDL and enabled in the connection string.
+            *   Review input validation (client-side HTML5 attributes/jQuery, and server-side in code-behinds) for all forms.
+        4.  **Privilege Adherence:** Ensure no pathways for privilege escalation exist.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 5.0: Completed comprehensive conceptual review of security, error handling, data integrity, and privilege enforcement across the application."
+    *   **Purpose:** A final holistic check to ensure the application meets its quality, security, and robustness requirements.
+
+*   **[ ] Step 5.1: Finalize Code, File Structure, and Build Script**
+    *   **[ ] Instruction:**
+        1.  **Code Polish:** Perform a final conceptual pass over all C# code for clarity, consistent naming, adherence to .NET Framework best practices, and proper resource disposal (`using` statements).
+        2.  **File Structure Verification:** Ensure all generated files are correctly located within their designated project folders.
+        3.  **Project Files (`.csproj`, `.sln`) Audit:** Verify the `Build-Project.ps1` script's output for `.csproj` files ensures all C# source files are included as `<Compile Include="..." />` items. Confirm inter-project references and NuGet package references (with `HintPaths`) are correctly specified.
+        4.  **`Web.config` Audit:** Confirm it contains only the essential `SQLiteDbFileName` in `appSettings` and that other configurations (authentication, authorization, custom errors, OWIN) are correct.
+        5.  **`Global.asax.cs` Audit:** Verify robust logic for database initialization, data seeding, and `AITaskProcessor` lifecycle management.
+        6.  **PowerShell Script (`Build-Project.ps1`) Final Review:**
+            *   Re-verify its logic for directory creation, `nuget.exe` commands (correct package names and versions), and generation of `.sln` and `.csproj` files. Pay special attention to the accuracy of `HintPaths` for NuGet DLLs.
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 5.1: Completed final review and conceptual validation of all code, file structures, project configurations, and the `Build-Project.ps1` setup script."
+    *   **Purpose:** Ensures the entire deliverable codebase and supporting artifacts are complete, correct, and consistent.
+
+*   **[ ] Step 5.2: Refine Conceptual Unit Test Specifications**
+    *   **[ ] Instruction:** Review all conceptual unit test outlines previously specified for DAL and Service layer methods.
+        *   Ensure tests cover:
+            *   Happy path scenarios for all public methods.
+            *   Boundary conditions (e.g., null inputs, empty collections, zero values where applicable).
+            *   Error/exception handling paths (e.g., DAL method fails, service handles it).
+            *   Specific logic checks (e.g., `ApplicationSettingsService` decryption logic, `PasswordHasher` verification).
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 5.2: Refined and finalized conceptual unit test specifications for key business logic and data access components."
+    *   **Purpose:** Provides a clear set of testing requirements that would be used to verify the application's components if actual unit testing were performed.
+
+*   **[ ] Step 5.3: Create Detailed User Manual & Test Data Management Plan**
+    *   **[ ] Instruction:** Generate a new Markdown file named `User_Manual.md` in the root of the project workspace.
+    *   **[ ] Manual Content Requirements:**
+        1.  **Introduction:**
+            *   Brief overview of CSharpAIAssistant and its purpose.
+            *   Target audience (general users, administrators).
+        2.  **Getting Started:**
+            *   System requirements (browser).
+            *   How to access the application (URL).
+        3.  **User Account Management:**
+            *   Registering a new account.
+            *   Logging in with username/password.
+            *   Logging in with Google.
+            *   Logging out.
+            *   (If implemented) Changing password, managing profile.
+        4.  **Using the AI Assistant (for Regular Users):**
+            *   Navigating to the "My Tasks" / "Create Task" area.
+            *   How to create a new AI Task:
+                *   Entering a Task Name (optional).
+                *   Writing an effective Prompt.
+                *   Selecting an AI Model.
+                *   Configuring parameters (Max Tokens, Temperature) - explain what they mean.
+            *   Viewing Task List: Understanding columns (Name, Model, Status, Dates).
+            *   Viewing Task Details: Interpreting prompt, AI-generated content, metadata (tokens, time), and error messages.
+        5.  **Administrator Functions (Admin Panel):**
+            *   Accessing the Admin Panel.
+            *   **Application Settings Management (`Admin/Settings.aspx`):**
+                *   Overview of the settings grid.
+                *   How to view settings.
+                *   How to use the "Show Decrypted Values" checkbox for sensitive settings (with a security reminder).
+                *   How to edit existing settings (explain that new sensitive values are entered in plaintext and encrypted on save).
+                *   Explanation of key seeded settings and what they control (e.g., Google Keys, OpenAI Keys, Session Timeout, Default AI parameters).
+            *   **User Management (`Admin/UserManagement.aspx`):**
+                *   Viewing the list of users.
+                *   How to promote a user to an admin / demote an admin to a regular user using the checkbox.
+                *   Warning about not demoting the last admin.
+            *   **AI Model Configuration (`Admin/AIModels.aspx`):**
+                *   Viewing configured AI models.
+                *   How to add a new AI Model: Entering `DisplayName`, `ModelIdentifier` (from OpenAI), selecting the `OpenAISettingKeyForApiKey` (linking to an encrypted API key in App Settings), setting defaults (tokens, temp), activating.
+                *   How to edit an existing AI Model configuration.
+                *   How to activate/deactivate models.
+        6.  **Troubleshooting (Basic):**
+            *   Common login issues.
+            *   Task remains "Pending" or "Queued" for too long.
+            *   Task "Failed" - checking error messages.
+        7.  **Proving Functionality (Conceptual Test Scenarios for Manual):**
+            *   This section should outline key user stories and the steps an admin or user would take to verify core functionality, demonstrating the app works as intended.
+            *   Example User Story: "As an admin, I want to configure a new OpenAI API key and associate it with a new AI model, so users can utilize this model."
+                *   Test Steps: 1. Login as admin. 2. Navigate to App Settings. 3. Add a new setting for the API key (e.g., "ApiKey_MyNewModel_Encrypted", enter plaintext key, mark as sensitive/encrypted). 4. Verify it's saved and shows as "********". 5. Navigate to AI Models. 6. Add a new model, select the newly created API key setting, fill other details, save. 7. Log out, log in as a regular user. 8. Create a new task, verify the new model is available for selection.
+            *   Include conceptual test scenarios for: User registration, Forms login, Google login, Task creation (with default and overridden parameters), Task completion (success), Task failure, Admin viewing decrypted settings, Admin changing user's admin status.
+        8.  **Test Data Management (for Production Environment):**
+            *   **Adding Test Data (Conceptual):** "For testing specific scenarios, an administrator might need to create test users or specific AI tasks. This should be done through the application's standard UI."
+            *   **Identifying Test Data:** "It is recommended that any data created purely for testing purposes be clearly identifiable, for example, by using a specific prefix in usernames (e.g., `test_user_`) or task names (e.g., `[TEST] My Task`)."
+            *   **Removing Test Data:**
+                *   "**User Accounts:** Test user accounts can be managed (e.g., have their admin status revoked or notes added about their test nature) via the 'Admin -> User Management' page. For full deletion, direct database intervention by a database administrator would be required if no UI for user deletion is implemented. A SQL script can be provided for this: `DELETE FROM Users WHERE Username LIKE 'test_user_%';` (Use with extreme caution, back up database first)."
+                *   "**AI Tasks & Results:** There is no built-in UI for bulk deleting tasks. Test tasks will remain in the system unless manually deleted from the database by a database administrator. Example SQL: `DELETE FROM AITaskResults WHERE AITaskId IN (SELECT Id FROM AITasks WHERE TaskName LIKE '[TEST]%'); DELETE FROM AITasks WHERE TaskName LIKE '[TEST]%';` (Use with extreme caution, back up database first)."
+                *   "**Application Settings/AI Models:** Test configurations can be deleted or deactivated via their respective admin pages."
+            *   **Production Data Integrity:** "Emphasize that any direct database manipulation for removing test data must be performed with extreme care, ideally on a staging environment first, and always after a full database backup of the production environment."
+    *   **[ ] Instruction (Build Log):** Log completion: "Step 5.3: Generated `User_Manual.md` detailing application usage for users and administrators, including conceptual test scenarios and guidelines for managing test data in a production context."
+    *   **Purpose:** Provides comprehensive guidance for end-users and administrators on how to use and manage the application effectively.
+
+*   **[ ] Step 5.4: Finalize `README.md` and `AI_Build_Log.md`**
+    *   **[ ] Instruction:** Generate the final `CSharpAIAssistant/README.md` at the root of the project workspace.
+    *   **[ ] README Content Requirements (as detailed in v4 plan, Step 5.4, but ensure it incorporates the PowerShell script usage as the primary setup method and the critical post-first-run configuration steps for admins).**
+    *   **[ ] Instruction:** Review the entire `AI_Build_Log.md` document.
+        *   Ensure every step from this project plan (Phase 0 to Phase 5) has a corresponding, accurate entry.
+        *   Verify chronological order and clarity of logged actions.
+        *   Confirm that any significant decisions or assumptions made during generation (like the hardcoded encryption key strategy) are noted.
+    *   **[ ] Instruction (Build Log):** Log final entry: "Step 5.4: Performed final system-wide conceptual reviews, generated comprehensive README.md, and finalized this AI Build Log. CSharpAIAssistant project plan execution is complete. All specified artifacts are now conceptually generated."
+    *   **Purpose:** Delivers the primary developer documentation (README) and the complete audit trail of the AI's build process (Build Log).
+
+**(End of Phase 5 and Entire Project Plan. This completes the full, detailed, instructional project plan based on all cumulative requirements.)**

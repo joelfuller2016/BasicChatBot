@@ -1,0 +1,165 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="CSharpAIAssistant.Web.SiteMaster" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %> - CSharpAI Assistant</title>
+
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/bundles/modernizr") %>
+    </asp:PlaceHolder>
+    
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/site.css" rel="stylesheet" />
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+
+<body>
+    <form runat="server">
+        <asp:ScriptManager runat="server">
+            <Scripts>
+                <%--To learn more about bundling scripts in ScriptManager see https://go.microsoft.com/fwlink/?LinkID=301884 --%>
+                <%--Framework Scripts--%>
+                <asp:ScriptReference Name="MsAjaxBundle" />
+                <asp:ScriptReference Name="jquery" />
+                <asp:ScriptReference Name="bootstrap" />
+                <asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
+                <asp:ScriptReference Name="WebUIValidation.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebUIValidation.js" />
+                <asp:ScriptReference Name="MenuStandards.js" Assembly="System.Web" Path="~/Scripts/WebForms/MenuStandards.js" />
+                <asp:ScriptReference Name="GridView.js" Assembly="System.Web" Path="~/Scripts/WebForms/GridView.js" />
+                <asp:ScriptReference Name="DetailsView.js" Assembly="System.Web" Path="~/Scripts/WebForms/DetailsView.js" />
+                <asp:ScriptReference Name="TreeView.js" Assembly="System.Web" Path="~/Scripts/WebForms/TreeView.js" />
+                <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
+                <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
+                <asp:ScriptReference Name="WebFormsBundle" />
+                <%--Site Scripts--%>
+            </Scripts>
+        </asp:ScriptManager>
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="~/Default.aspx" runat="server">
+                    <i class="fas fa-robot me-2"></i>CSharpAI Assistant
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="~/Default.aspx" runat="server">
+                                <i class="fas fa-home me-1"></i>Home
+                            </a>
+                        </li>
+                        
+                        <asp:LoginView ID="LoginView1" runat="server" EnableViewState="false">
+                            <LoggedInTemplate>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Tasks/TaskList.aspx" runat="server">
+                                        <i class="fas fa-tasks me-1"></i>My Tasks
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Tasks/CreateTask.aspx" runat="server">
+                                        <i class="fas fa-plus me-1"></i>New Task
+                                    </a>
+                                </li>
+                            </LoggedInTemplate>
+                        </asp:LoginView>
+                        
+                        <!-- Admin Menu -->
+                        <li class="nav-item dropdown" id="adminDropdown" runat="server" visible="false">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cog me-1"></i>Admin
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="~/Admin/Settings.aspx" runat="server">
+                                    <i class="fas fa-sliders-h me-2"></i>App Settings
+                                </a></li>
+                                <li><a class="dropdown-item" href="~/Admin/UserManagement.aspx" runat="server">
+                                    <i class="fas fa-users me-2"></i>User Management
+                                </a></li>
+                                <li><a class="dropdown-item" href="~/Admin/AIModels.aspx" runat="server">
+                                    <i class="fas fa-brain me-2"></i>AI Models
+                                </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <!-- Authentication Menu -->
+                    <ul class="navbar-nav">
+                        <asp:LoginView ID="LoginView2" runat="server" EnableViewState="false">
+                            <AnonymousTemplate>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Account/Register.aspx" runat="server">
+                                        <i class="fas fa-user-plus me-1"></i>Register
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Account/Login.aspx" runat="server">
+                                        <i class="fas fa-sign-in-alt me-1"></i>Log in
+                                    </a>
+                                </li>
+                            </AnonymousTemplate>
+                            <LoggedInTemplate>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user me-1"></i>Hello, <asp:LoginName ID="LoginName1" runat="server" CssClass="username" />!
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <asp:LoginStatus ID="LoginStatus1" runat="server" 
+                                                LogoutAction="Redirect" LogoutText="Log Off" LogoutPageUrl="~/Account/Logout.aspx" 
+                                                CssClass="dropdown-item" />
+                                        </li>
+                                    </ul>
+                                </li>
+                            </LoggedInTemplate>
+                        </asp:LoginView>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container">
+            <main role="main" class="pb-3">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                </asp:ContentPlaceHolder>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer mt-auto py-3 bg-light">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <span class="text-muted">© <%: DateTime.Now.Year %> CSharpAI Assistant. Built with .NET Framework 4.8.</span>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <span class="text-muted" id="last-refresh"></span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Scripts -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+        
+        <asp:ContentPlaceHolder ID="ScriptsPlaceHolder" runat="server">
+        </asp:ContentPlaceHolder>
+    </form>
+</body>
+</html>

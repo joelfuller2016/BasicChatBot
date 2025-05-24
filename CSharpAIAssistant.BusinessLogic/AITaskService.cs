@@ -197,6 +197,30 @@ namespace CSharpAIAssistant.BusinessLogic
         }
 
         /// <summary>
+        /// Gets AI tasks for a specific user with filtering and pagination
+        /// </summary>
+        /// <param name="userId">ID of the user</param>
+        /// <param name="pageNumber">Page number (1-based)</param>
+        /// <param name="pageSize">Number of tasks per page</param>
+        /// <param name="statusFilter">Optional status filter</param>
+        /// <returns>List of AI tasks for the user</returns>
+        public List<AITask> GetUserTasksWithFilters(int userId, int pageNumber = 1, int pageSize = 20, string statusFilter = null)
+        {
+            try
+            {
+                if (userId <= 0)
+                    throw new ArgumentException("Valid user ID is required", nameof(userId));
+
+                return _aiTaskDAL.GetByUserIdWithFilter(userId, pageNumber, pageSize, statusFilter);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Error retrieving user tasks with filters for user {0}: {1}", userId, ex.ToString());
+                throw new InvalidOperationException("Failed to retrieve user tasks", ex);
+            }
+        }
+
+        /// <summary>
         /// Gets the count of tasks by status for a user
         /// </summary>
         /// <param name="userId">ID of the user</param>
@@ -215,6 +239,27 @@ namespace CSharpAIAssistant.BusinessLogic
             {
                 System.Diagnostics.Trace.TraceError("Error getting task count for user {0}: {1}", userId, ex.ToString());
                 return 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets detailed task statistics for a user
+        /// </summary>
+        /// <param name="userId">ID of the user</param>
+        /// <returns>Task statistics object</returns>
+        public UserTaskStatistics GetUserTaskStatistics(int userId)
+        {
+            try
+            {
+                if (userId <= 0)
+                    return new UserTaskStatistics();
+
+                return _aiTaskDAL.GetUserTaskStatistics(userId);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Error getting user task statistics for user {0}: {1}", userId, ex.ToString());
+                return new UserTaskStatistics();
             }
         }
 

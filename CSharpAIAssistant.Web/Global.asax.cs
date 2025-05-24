@@ -124,8 +124,8 @@ namespace CSharpAIAssistant.Web
                             }
                         }
 
-                        Trace.WriteLine("Database schema created successfully. Executed {0} DDL statements.", 
-                                      SqlSchemaConstants.AllDDLStatements.Length);
+                        Trace.WriteLine(string.Format("Database schema created successfully. Executed {0} DDL statements.", 
+                                      SqlSchemaConstants.AllDDLStatements.Length));
 
                         // Seed initial data
                         CSharpAIAssistant.BusinessLogic.DataSeeder.SeedInitialData(connection, transaction);

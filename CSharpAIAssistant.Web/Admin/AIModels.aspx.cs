@@ -303,7 +303,7 @@ namespace CSharpAIAssistant.Web.Admin
 
         protected void gvModels_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataRowType.DataRow)
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 var model = (AIModelConfiguration)e.Row.DataItem;
                 

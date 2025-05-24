@@ -24,3 +24,18 @@ C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\
 C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\Newtonsoft.Json.xml
 C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\System.Data.SQLite.xml
 C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.BusinessLogic\obj\Debug\CSharpAIAssistant.BusinessLogic.csproj.CopyComplete
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.BusinessLogic.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.BusinessLogic.pdb
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.DataAccess.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.Models.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\Newtonsoft.Json.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\System.Data.SQLite.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.DataAccess.pdb
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\CSharpAIAssistant.Models.pdb
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\Newtonsoft.Json.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\bin\Debug\System.Data.SQLite.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\obj\Debug\CSharpAIAssistant.BusinessLogic.csproj.AssemblyReference.cache
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\obj\Debug\CSharpAIAssistant.BusinessLogic.csproj.CoreCompileInputs.cache
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\obj\Debug\CSharpAI.A4D19AC5.Up2Date
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\obj\Debug\CSharpAIAssistant.BusinessLogic.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.BusinessLogic\obj\Debug\CSharpAIAssistant.BusinessLogic.pdb

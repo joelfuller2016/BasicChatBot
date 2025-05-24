@@ -221,6 +221,62 @@ namespace CSharpAIAssistant.DataAccess
         }
 
         /// <summary>
+        /// Retrieves AI tasks for a specific user with filtering and pagination
+        /// </summary>
+        /// <param name="userId">The ID of the user</param>
+        /// <param name="pageNumber">Page number (1-based)</param>
+        /// <param name="pageSize">Number of tasks per page</param>
+        /// <param name="statusFilter">Optional status filter</param>
+        /// <returns>List of AI tasks for the user</returns>
+        public List<AITask> GetByUserIdWithFilter(int userId, int pageNumber = 1, int pageSize = 20, string statusFilter = null)
+        {
+            if (userId <= 0)
+                throw new ArgumentException("Valid UserId is required", nameof(userId));
+
+            if (pageNumber < 1)
+                pageNumber = 1;
+
+            if (pageSize < 1)
+                pageSize = 20;
+
+            int offset = (pageNumber - 1) * pageSize;
+
+            string sql = @"
+                SELECT Id, UserId, AIModelConfigurationId, TaskName, PromptText, Status,
+                       MaxTokens, Temperature, CreatedAt, QueuedAt, ProcessingStartedAt,
+                       CompletedAt, ErrorMessage
+                FROM AITasks
+                WHERE UserId = @UserId";
+
+            var parameters = new List<SQLiteParameter>
+            {
+                SQLiteHelper.CreateParameter("@UserId", userId)
+            };
+
+            if (!string.IsNullOrEmpty(statusFilter))
+            {
+                sql += " AND Status = @Status";
+                parameters.Add(SQLiteHelper.CreateParameter("@Status", statusFilter));
+            }
+
+            sql += @"
+                ORDER BY CreatedAt DESC
+                LIMIT @PageSize OFFSET @Offset";
+
+            parameters.Add(SQLiteHelper.CreateParameter("@PageSize", pageSize));
+            parameters.Add(SQLiteHelper.CreateParameter("@Offset", offset));
+
+            var results = new List<AITask>();
+
+            SQLiteHelper.ExecuteReader(sql, reader =>
+            {
+                results.Add(MapReaderToAITask(reader));
+            }, parameters.ToArray());
+
+            return results;
+        }
+
+        /// <summary>
         /// Gets the count of tasks by status for a specific user
         /// </summary>
         /// <param name="userId">User ID</param>
@@ -242,6 +298,82 @@ namespace CSharpAIAssistant.DataAccess
 
             object result = SQLiteHelper.ExecuteScalar(sql, parameters.ToArray());
             return Convert.ToInt32(result);
+        }
+
+        /// <summary>
+        /// Gets comprehensive task statistics for a user
+        /// </summary>
+        /// <param name="userId">User ID</param>
+        /// <returns>UserTaskStatistics object with detailed statistics</returns>
+        public UserTaskStatistics GetUserTaskStatistics(int userId)
+        {
+            var stats = new UserTaskStatistics();
+
+            if (userId <= 0)
+                return stats;
+
+            const string taskCountsSql = @"
+                SELECT 
+                    Status,
+                    COUNT(*) as Count
+                FROM AITasks 
+                WHERE UserId = @UserId 
+                GROUP BY Status";
+
+            // Get task counts by status
+            SQLiteHelper.ExecuteReader(taskCountsSql, reader =>
+            {
+                string status = reader["Status"]?.ToString();
+                int count = Convert.ToInt32(reader["Count"]);
+
+                switch (status?.ToLower())
+                {
+                    case "pending":
+                        stats.PendingTasks = count;
+                        break;
+                    case "queued":
+                        stats.QueuedTasks = count;
+                        break;
+                    case "processing":
+                        stats.ProcessingTasks = count;
+                        break;
+                    case "completed":
+                        stats.CompletedTasks = count;
+                        break;
+                    case "failed":
+                        stats.FailedTasks = count;
+                        break;
+                }
+                stats.TotalTasks += count;
+            }, SQLiteHelper.CreateParameter("@UserId", userId));
+
+            // Get token usage and date statistics
+            const string tokenStatsSql = @"
+                SELECT 
+                    COALESCE(SUM(atr.TokensUsed_Total), 0) as TotalTokens,
+                    MAX(at.CreatedAt) as LastTaskCreated,
+                    MAX(CASE WHEN at.Status = 'Completed' THEN at.CompletedAt END) as LastTaskCompleted
+                FROM AITasks at
+                LEFT JOIN AITaskResults atr ON at.Id = atr.AITaskId
+                WHERE at.UserId = @UserId";
+
+            SQLiteHelper.ExecuteReader(tokenStatsSql, reader =>
+            {
+                stats.TotalTokensUsed = reader["TotalTokens"] != DBNull.Value ? 
+                    Convert.ToInt64(reader["TotalTokens"]) : 0;
+
+                if (reader["LastTaskCreated"] != DBNull.Value)
+                {
+                    stats.LastTaskCreated = DateTime.Parse(reader["LastTaskCreated"].ToString());
+                }
+
+                if (reader["LastTaskCompleted"] != DBNull.Value)
+                {
+                    stats.LastTaskCompleted = DateTime.Parse(reader["LastTaskCompleted"].ToString());
+                }
+            }, SQLiteHelper.CreateParameter("@UserId", userId));
+
+            return stats;
         }
 
         /// <summary>

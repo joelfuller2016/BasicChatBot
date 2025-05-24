@@ -28,3 +28,38 @@ C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAs
 C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.csproj.CopyComplete
 C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.dll
 C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.pdb
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.csproj.AssemblyReference.cache
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.csproj.CoreCompileInputs.cache
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAIAssistant.Web.pdb
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.Web.dll.config
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.Web.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.Web.pdb
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.BusinessLogic.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.DataAccess.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.Models.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.AspNet.Identity.Core.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.AspNet.Identity.Owin.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Owin.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Owin.Host.SystemWeb.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Owin.Security.Cookies.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Owin.Security.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Owin.Security.Google.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Newtonsoft.Json.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Owin.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\System.Data.SQLite.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.BusinessLogic.pdb
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.DataAccess.pdb
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.Models.pdb
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.AspNet.Identity.Core.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.AspNet.Identity.Owin.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Owin.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Owin.Host.SystemWeb.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Owin.Security.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Owin.Security.Cookies.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Microsoft.Owin.Security.Google.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\Newtonsoft.Json.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\System.Data.SQLite.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\obj\Debug\CSharpAI.6BC854EB.Up2Date
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.Web.dll.CodeAnalysisLog.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.Web\bin\CSharpAIAssistant.Web.dll.lastcodeanalysissucceeded

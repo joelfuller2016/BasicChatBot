@@ -18,3 +18,14 @@ C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSh
 C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\System.Data.SQLite.dll
 C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\System.Data.SQLite.xml
 C:\Users\j.fuller\source\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.csproj.CopyComplete
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\CSharpAIAssistant.DataAccess.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\CSharpAIAssistant.DataAccess.pdb
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\CSharpAIAssistant.Models.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\System.Data.SQLite.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\CSharpAIAssistant.Models.pdb
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.DataAccess\bin\Debug\System.Data.SQLite.xml
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.csproj.AssemblyReference.cache
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.csproj.CoreCompileInputs.cache
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAI.3461CF84.Up2Date
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.dll
+C:\Users\joelf\OneDrive\Joels Files\Documents\GitHub\BasicChatBot\CSharpAIAssistant.DataAccess\obj\Debug\CSharpAIAssistant.DataAccess.pdb
